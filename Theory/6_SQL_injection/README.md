@@ -12,7 +12,9 @@ SQL инъекция – один из самый распространённы
 5. Допустим, у нас есть запрос
 
 ```sql
-Select * from students where n_zach = :value;
+SELECT *
+FROM students
+WHERE n_zach = :value;
 ```
 
 Где :value – входной параметр и предполагается, что это будет просто цифра. Например 1, 2, 3 и т.д.. И этот запрос нам будет возвращать всю информацию о конкретном студенте.
@@ -20,7 +22,10 @@ Select * from students where n_zach = :value;
 На если вместо числа задать :value как 1 or 1 = 1, то запрос приобретёт следующий вид:
 
 ```sql
-Select * from students where n_zach = 1 or 1 = 1;
+SELECT *
+FROM students
+WHERE n_zach = 1
+  OR 1 = 1;
 ```
 
 Очевидно, что данный запрос вернёт не одну строку, а всё содержимое таблицы.
@@ -28,8 +33,12 @@ Select * from students where n_zach = 1 or 1 = 1;
 2. Допустим, есть запрос:
 
 ```sql
-Select n_zach, name, surname, n_group from students
-where n_zach = :__value;
+SELECT n_zach,
+       name,
+       surname,
+       n_group
+FROM students
+WHERE n_zach = :__value;
 ```
 
 Предполагается, что :value будет принимать число и выводиться номер зачётки, имя, фамилия и номер группа студента. Но можно вместо этого передать следующие данные:
@@ -39,16 +48,28 @@ where n_zach = :__value;
 `_UNION_`
 
 ```sql
-Select 1, name, '1', 1 from hobby;
+SELECT 1,
+       name,
+       '1',
+       1
+FROM hobby;
 ```
 
 В итоге запрос будет выглядеть так:
 
 ```sql
-Select n_zach, name, surname, n_group from students
-where n_zach = -1
+SELECT n_zach,
+       name,
+       surname,
+       n_group
+FROM students
+WHERE n_zach = -1
 UNION
-Select 1, name, '1', 1 from hobby;
+SELECT 1,
+       name,
+       '1',
+       1
+FROM hobby;
 ```
 
 Студента с номером зачётки -1 не существует, поэтому первый запрос ничего не вернёт, а вот второй вернёт названия хобби.
@@ -58,8 +79,13 @@ Select 1, name, '1', 1 from hobby;
 3. Если бы предыдущий запрос выглядел вот таким образом:
 
 ```sql
-Select n_zach, name, surname, n_group from students
-where n_zach = :value and name like '%';
+SELECT n_zach,
+       name,
+       surname,
+       n_group
+FROM students
+WHERE n_zach = :value
+  AND name LIKE '%';
 ```
 
 То предыдущий запрос уже бы не сработал, но можно после запроса добавить комментарий, например /\*, который закомментирует весь следующий код.
@@ -67,8 +93,11 @@ where n_zach = :value and name like '%';
 4. Допустим, для запроса
 
 ```sql
-Select n_zach, name, surname, n_group from students
-where_ _n___zach = :__value
+SELECT n_zach,
+       name,
+       surname,
+       n_group
+FROM students where_ _n___zach = :__value;
 ```
 
 добавляется такая часть
@@ -81,7 +110,7 @@ _1;_ _DROP_ _TABLE_ _students;_
 
 Необходимо всех использовать параметры, например в ASP.NET:
 
-```sql
+```c#
 n_zach = getRequestString("n_zach");
 query = "SELECT * FROM students WHERE n_zach = @0";
 db.Execute(query, zach);

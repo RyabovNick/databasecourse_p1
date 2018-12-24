@@ -11,5 +11,6 @@ Select * from [schema].[table]
 Просмотр всех полномочий, предоставленных/полученных:
 
 ```sql
-SELECT * FROM USER_TAB_PRIVS;
+SELECT *
+FROM USER_TAB_PRIVS;
 ```
