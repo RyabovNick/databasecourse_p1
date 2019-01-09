@@ -14,7 +14,7 @@ SQL инъекция – один из самый распространённы
 ```sql
 SELECT *
 FROM students
-WHERE n_zach = :value;
+WHERE n_z = :value;
 ```
 
 Где :value – входной параметр и предполагается, что это будет просто цифра. Например 1, 2, 3 и т.д.. И этот запрос нам будет возвращать всю информацию о конкретном студенте.
@@ -24,7 +24,7 @@ WHERE n_zach = :value;
 ```sql
 SELECT *
 FROM students
-WHERE n_zach = 1
+WHERE n_z = 1
   OR 1 = 1;
 ```
 
@@ -33,12 +33,12 @@ WHERE n_zach = 1
 2. Допустим, есть запрос:
 
 ```sql
-SELECT n_zach,
+SELECT n_z,
        name,
        surname,
        n_group
 FROM students
-WHERE n_zach = :__value;
+WHERE n_z = :__value;
 ```
 
 Предполагается, что :value будет принимать число и выводиться номер зачётки, имя, фамилия и номер группа студента. Но можно вместо этого передать следующие данные:
@@ -58,12 +58,12 @@ FROM hobby;
 В итоге запрос будет выглядеть так:
 
 ```sql
-SELECT n_zach,
+SELECT n_z,
        name,
        surname,
        n_group
 FROM students
-WHERE n_zach = -1
+WHERE n_z = -1
 UNION
 SELECT 1,
        name,
@@ -79,12 +79,12 @@ FROM hobby;
 3. Если бы предыдущий запрос выглядел вот таким образом:
 
 ```sql
-SELECT n_zach,
+SELECT n_z,
        name,
        surname,
        n_group
 FROM students
-WHERE n_zach = :value
+WHERE n_z = :value
   AND name LIKE '%';
 ```
 
@@ -93,11 +93,11 @@ WHERE n_zach = :value
 4. Допустим, для запроса
 
 ```sql
-SELECT n_zach,
+SELECT n_z,
        name,
        surname,
        n_group
-FROM students where_ _n___zach = :__value;
+FROM students where n_z = :value;
 ```
 
 добавляется такая часть
@@ -108,11 +108,39 @@ _1;_ _DROP_ _TABLE_ _students;_
 
 Защита от sql инъекций заключается в том, чтобы проверять все входящие параметры. Сейчас почти везде реализованы функции для этого, например php: mysqli_real_escape_string – для проверки.
 
-Необходимо всех использовать параметры, например в ASP.NET:
+Необходимо всех использовать параметры, например
+
+в Node.Js:
+
+```js
+router.get("/students/city/:city", (req, res, next) => {
+  //достать переменную :city из ссылки
+  var city = req.params["city"];
+
+  pool.getConnection((err, con) => {
+    if (err) throw err;
+
+    // ? - экранирует код в '' кавычках
+    // ?? - экранирует код в `` кавычках
+    // это необходимо, чтобы не быть уязвимым к sql инъекциям
+    con.query(
+      "Select * from students where city = ?",
+      city,
+      (error, result) => {
+        if (error) throw error;
+
+        res.send(result);
+      }
+    );
+  });
+});
+```
+
+в ASP.NET:
 
 ```c#
-n_zach = getRequestString("n_zach");
-query = "SELECT * FROM students WHERE n_zach = @0";
+n_z = getRequestString("n_z");
+query = "SELECT * FROM students WHERE n_z = @0";
 db.Execute(query, zach);
 @0 – параметр.
 ```
