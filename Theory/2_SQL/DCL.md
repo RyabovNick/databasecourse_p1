@@ -1,10 +1,22 @@
 # DCL
 
+Управление доступом к различным объектам БД.
+
 ```sql
 Grant [privileges] on [table] to [schema]
-Example: Grant select on students to user
-Revoke [privileges] on [table] from [schema]
 
+Revoke [privileges] on [table] from [schema]
+```
+
+Предоставить права на таблицу students пользователю user
+
+```sql
+Grant select on students to user
+```
+
+После этого пользователь, получивший права может выполнять Select к заданной таблице
+
+```sql
 Select * from [schema].[table]
 ```
 

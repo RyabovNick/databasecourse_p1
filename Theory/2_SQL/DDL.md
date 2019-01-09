@@ -9,9 +9,9 @@
 Синтаксис команды создания таблицы:
 
 ```sql
-CREATE  TABLE  _имя_таблицы_(
-_поле1 тип1_ [_ограничения_],
-[_поле2 тип2_ [_ограничения_],
+CREATE  TABLE  имя_таблицы(
+поле1 тип1 [ограничения],
+[поле2 тип2 [ограничения],
 …]);
 ```
 
@@ -28,14 +28,20 @@ _поле1 тип1_ [_ограничения_],
 Например, для создания таблицы Students достаточно выполнить следующую команду:
 
 ```sql
-CREATE TABLE Students(
-N_z NUMBER,
-F_Name VARCHAR2(30),
-S_ Name VARCHAR2(30),
-Data_B Date,
+CREATE TABLE STUDENTS (
+    N_ZACH NUMBER(5,0),
+	NAME VARCHAR2(150),
+	SURNAME VARCHAR2(150),
+	N_GROUP NUMBER(4,0),
+	ADDRESS VARCHAR2(200),
+	DATE_BIRTH DATE,
+	AVERAGE_SCORE NUMBER(3,2),
+	CONSTRAINT STUDENTS_PK PRIMARY KEY (N_ZACH)
+  USING INDEX  ENABLE
+   )
 ```
 
-Comments VARCHAR2(50) DEFAULT ‘no comments’);
+Обратите внимание. Если при создании вы используете ", например "students" (именно маленькими), то название таблицы/атрибута станет чувствительным к регистру. Плюсы - можно написать зарезервированное слово, например "count". Минусы - придётся в любом запросе ещё использовать кавычки, что не особо удобно.
 
 #### Создание копии таблицы
 
@@ -48,7 +54,7 @@ CREATE TABLE имя_таблицы AS оператор SELECT
 Например, для того чтобы создать копию таблицы Students можно выполнить следующую команду:
 
 ```sql
-CREATE TABLE Students_Copy AS SELECT * FROM Students;
+CREATE TABLE Students_Copy AS SELECT * FROM STUDENTS;
 ```
 
 ## Оператор ALTER
@@ -173,7 +179,7 @@ ALTER TABLE имя_таблицы DROP CONSTRAINT имя_ограничения;
 Например, для удаления внешнего ключа связывающего таблицы Students_Hobby и Students можно выполнить следующую команду:
 
 ```sql
-ALTER TABLE Dealers DROP CONSTRAINT Students_Hobby_fk;
+ALTER TABLE Students_Hobby DROP CONSTRAINT Students_Hobby_fk;
 ```
 
 ## Оператор DROP
