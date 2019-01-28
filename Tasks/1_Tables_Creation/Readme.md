@@ -273,3 +273,5 @@ Insert ALL
   INTO students () VALUES ()
 Select * FROM DUAL
 ```
+
+Dual - системная таблица, которая возвращает 1 строку и 1 столбец.
