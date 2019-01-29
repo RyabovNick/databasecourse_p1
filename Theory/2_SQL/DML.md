@@ -32,8 +32,39 @@ FROM имя_таблицы;
 
 ```sql
 SELECT *
-FROM Students;
+FROM students;
 ```
+
+### Псевдоним
+
+Псевдонимы (alias) удобно использовать для более удобного доступа к таблицам в запросе, а также для переименования атрибутов. [Подробнее п.12](../../Tasks/README.md)
+
+Если запрос на одну таблицу, то понятно, что псевдонимами можно принебречь, но лучше привыкать так всегда.
+
+Примеры:
+
+Без использования псевдонима
+
+```sql
+Select name, surname
+From students
+```
+
+С использованием псевдонима таблицы
+
+```sql
+Select s.name, s.surname
+From students s
+```
+
+С использованием псевдонима атрибутов
+
+```sql
+Select s.name as students_name, s.surname as n
+From students s
+```
+
+Код выше сработает и без `as`, но для удобства лучше его использовать.
 
 ### Вертикальная фильтрация с указанием порядка вывода атрибутов
 
@@ -48,7 +79,7 @@ SELECT поле1[, поле2, …] FROM имя_таблицы;
 ```sql
 SELECT N_z,
        Name
-FROM Students;
+FROM students;
 ```
 
 ### Исключение дубликатов
@@ -58,8 +89,8 @@ FROM Students;
 -- вывод различных фамилий
 
 ```sql
-SELECT DISTINCT Surname
-FROM Students;
+SELECT DISTINCT surname
+FROM students;
 ```
 
 ### Выборка вычисляемых значений
@@ -74,8 +105,8 @@ FROM Students;
 
 ```sql
 SELECT *
-FROM Students
-ORDER BY Surname,
+FROM students
+ORDER BY surname,
          Name;
 ```
 
@@ -85,8 +116,8 @@ ORDER BY Surname,
 
 ```sql
 SELECT *
-FROM Students
-ORDER BY Surname,
+FROM students
+ORDER BY surname,
          Name DESC;
 ```
 
@@ -115,7 +146,7 @@ ORDER BY Surname,
 
 ```sql
 SELECT Name
-FROM Hobby
+FROM hobbies
 WHERE Risk <=5;
 ```
 
@@ -123,7 +154,7 @@ WHERE Risk <=5;
 
 ```sql
 SELECT Name
-FROM Hobby
+FROM hobbies
 WHERE NOT Risk >5;
 ```
 
@@ -137,7 +168,7 @@ WHERE NOT Risk >5;
 
 ```sql
 SELECT Name
-FROM Hobby
+FROM hobbies
 WHERE Risk NOT BETWEEN 5 AND 8;
 ```
 
@@ -148,9 +179,9 @@ WHERE Risk NOT BETWEEN 5 AND 8;
 Оператор IN используется для проверки вхождения значения какого-либо столбца в множество. Например:
 
 ```sql
-SELECT N_gr
-FROM Students
-WHERE N_group IN (11,
+SELECT n_group
+FROM students
+WHERE n_group IN (11,
                12,
                13);
 ```
@@ -160,9 +191,9 @@ WHERE N_group IN (11,
 В сочетании с оператором IN можно также использовать NOT для отбора строк, в которых значение какого-либо столбца наоборот не входит в множество. Например:
 
 ```sql
-SELECT N_gr
-FROM Students
-WHERE N_group NOT IN (11,
+SELECT n_group
+FROM students
+WHERE n_group NOT IN (11,
                    12,
                    13);
 ```
@@ -183,8 +214,8 @@ WHERE N_group NOT IN (11,
 
 ```sql
 SELECT *
-FROM Students
-WHERE Surname LIKE 'O%ов';
+FROM students
+WHERE surname LIKE 'O%ов';
 ```
 
 Оператор LIKE также можно сочетать с NOT для получения строк, значения определенных столбцов которых не удовлетворяют указанному шаблону.
@@ -197,7 +228,7 @@ WHERE Surname LIKE 'O%ов';
 
 ```sql
 SELECT *
-FROM Students
+FROM students
 WHERE address IS NULL;
 ```
 
@@ -225,7 +256,7 @@ INSERT INTO table_name
 VALUES (value1, value2, value3, ...);
 ```
 
-в этом случае необходимо указывать значения в таком же порядке, как атрибуты хранятся в таблице. Будьте внимательны. В oracle, на какой бы не хранился первичный ключ, в таблице при просмотре данных он будет первый. Но добавляя надо будет указать его именно на том месте, где вы его создавали. **Лучше всегда указывайте первичный(-ые) ключ 1-ым**
+в этом случае необходимо указывать значения в таком же порядке, как атрибуты хранятся в таблице. Будьте внимательны. В oracle, на какой месте бы не хранился первичный ключ, в таблице при просмотре данных он будет первый. Но добавляя надо будет указать его именно на том месте, где вы его создавали. **Лучше всегда указывайте первичный(-ые) ключ 1-ым**
 
 Пример:
 
@@ -233,6 +264,15 @@ VALUES (value1, value2, value3, ...);
 INSERT INTO students (N_Z, name, surname)
 VALUES (5, 'Иван', 'Иванов');
 ```
+
+Пример выше включает и добавление первичного ключа, но чаще (и мы так будем делать) используется автоматическа генерация первичного ключа, поэтому в основном запросы добавления у вас будут выглядеть следующим образом
+
+```sql
+INSERT INTO students (name, surname)
+VALUES ('Иван', 'Иванов');
+```
+
+Из-за этого практически всегда добавление в таблицу без конкретного указания атрибутов невозможно (т.к. всегда исключаем первичный ключ).
 
 Обратите внимание, что если это число, то можно не писать кавычки. Остальные типы данных пишутся в кавычках.
 
@@ -271,7 +311,7 @@ WHERE condition;
 
 ```sql
 UPDATE students
-SET Name = 'Николай', City = 'Dubna'
+SET Name = 'Николай', Address = 'Dubna'
 WHERE N_Z = 3;
 ```
 
@@ -282,7 +322,7 @@ WHERE N_Z = 3;
 ```sql
 UPDATE students
 SET score = 5
-WHERE Name = 'Николай' and City = 'Dubna';
+WHERE Name = 'Николай' and Address = 'Dubna';
 ```
 
 То запрос поменяет атрибут `score` на 5 для всех Николаев из города Дубна.

@@ -26,7 +26,7 @@ COUNT(DISTINCT поле) – подсчет количества уникаль�
 
 Примеры использования функции COUNT:
 
--- подсчет количества строк в таблице Students
+-- подсчет количества строк в таблице students
 
 ```sql
 SELECT COUNT(*)
@@ -37,7 +37,7 @@ FROM Student s;
 
 ```sql
 SELECT COUNT(DISTINCT L_name)
-FROM Students;
+FROM students;
 ```
 
 ##### SUM
@@ -48,7 +48,7 @@ FROM Students;
 
 ```sql
 SELECT SUM(Risk)
-FROM Hobby;
+FROM hobbies;
 ```
 
 ##### MAX
@@ -59,7 +59,7 @@ FROM Hobby;
 
 ```sql
 SELECT MAX(DATE_BIRTH)
-FROM Students;
+FROM students;
 ```
 
 ##### MIN
@@ -70,7 +70,7 @@ FROM Students;
 
 ```sql
 SELECT MIN(DATE_BIRTH)
-FROM Students;
+FROM students;
 ```
 
 ##### AVG
@@ -81,7 +81,7 @@ FROM Students;
 
 ```sql
 SELECT AVG(Risk)
-FROM Hobbys
+FROM Hobbies
 WHERE Name LIKE '%ов';
 ```
 
@@ -94,7 +94,7 @@ WHERE Name LIKE '%ов';
 ```sql
 SELECT N_gr,
        COUNT(N_gr) AS количество_студентов
-FROM Students
+FROM students
 GROUP BY N_gr
 ORDER BY N_gr DESC;
 ```
@@ -105,7 +105,7 @@ ORDER BY N_gr DESC;
 
 ```sql
 SELECT COUNT(N_gr) AS количество_студентов
-FROM Students
+FROM students
 GROUP BY N_gr;
 ```
 
@@ -118,7 +118,7 @@ GROUP BY N_gr;
 ```sql
 SELECT N_gr,
        COUNT(N_gr) AS count_students
-FROM Students
+FROM students
 GROUP BY N_gr
 HAVING COUNT(N_gr) > 12;
 ```
@@ -132,7 +132,7 @@ SELECT *
 FROM
   (SELECT N_gr,
           COUNT(N_gr) AS count_students
-   FROM Students
+   FROM students
    GROUP BY N_gr)
 WHERE count_students > 12;
 ```
@@ -157,16 +157,16 @@ WHERE count_students > 12;
 
 Соединения – это подмножества декартова произведения. Так как декартово произведение N таблиц – это таблица, содержащая все возможные строки R, такие, что R является сцеплением какой-либо строки из первой таблицы, строки из второй таблицы, ... и строки из N-й таблицы, то осталось лишь выяснить, можно ли с помощью SELECT получить декартово произведение. Для получения декартова произведения нескольких таблиц надо указать в параметре FROM перечень перемножаемых таблиц, а во фразе SELECT – все их столбцы.
 
-Так, для получения декартова произведения таблиц Students и Stud_hobby, необходимо выполнить запрос:
+Так, для получения декартова произведения таблиц students и students_hobbies, необходимо выполнить запрос:
 
 ```sql
-SELECT Students.*,
-       Stud_hobby.*
-FROM Students,
-     Stud_hobby;
+SELECT students.*,
+       students_hobbies.*
+FROM students,
+     students_hobbies;
 ```
 
-В зависимости от количества строк, содержащихся в обеих таблицах, результирующий набор записей будет содержать количество строк, равно N\*M, где N – количество строк в таблице Students, а M – количество строк в таблице Stud_hobby. При выполнении декартово произведения над большим количеством таблиц, количество получившихся строк еще более возрастет. Если взять любой из результатов, полученных после выполнения декартово произведения, то станет понятно, что актуальными записями являются лишь очень немногие. Поэтому операция декартово произведения является лишь промежуточным этапом.
+В зависимости от количества строк, содержащихся в обеих таблицах, результирующий набор записей будет содержать количество строк, равно N\*M, где N – количество строк в таблице students, а M – количество строк в таблице students_hobbies. При выполнении декартово произведения над большим количеством таблиц, количество получившихся строк еще более возрастет. Если взять любой из результатов, полученных после выполнения декартово произведения, то станет понятно, что актуальными записями являются лишь очень немногие. Поэтому операция декартово произведения является лишь промежуточным этапом.
 
 ##### Эквисоединение таблиц
 
@@ -175,26 +175,26 @@ FROM Students,
 Эквисоединение таблиц в предыдущем запросе выглядит следующим образом:
 
 ```sql
-SELECT Students.*,
-       Stud_hobby.*
-FROM Students,
-     Stud_hobby
-WHERE Students.N_z= Stud_hobby.N_z;
+SELECT students.*,
+       students_hobbies.*
+FROM students,
+     students_hobbies
+WHERE students.N_z= students_hobbies.N_z;
 ```
 
 ##### Естественное соединение таблиц
 
-Естественным соединением таблиц называется такое соединение, из которого исключены дубликаты столбцов, по которым проводилось эквисоединение (Students.N_z и Stud_hobby.N_z). Для исключения дубликатов в операторе SELECT необходимо явно указать только один из столбцов этих пар, принадлежащего главной таблице:
+Естественным соединением таблиц называется такое соединение, из которого исключены дубликаты столбцов, по которым проводилось эквисоединение (students.N_z и students_hobbies.N_z). Для исключения дубликатов в операторе SELECT необходимо явно указать только один из столбцов этих пар, принадлежащего главной таблице:
 
 ```sql
-SELECT Students.N_z,
-       Students.Name,
-       Students.Surname,
-       Students.DATE_BIRTH,
-       Stud_hobby.Name
-FROM Students,
-     Stud_hobby
-WHERE Students.N_z= Stud_hobby.N_z;
+SELECT students.N_z,
+       students.Name,
+       students.Surname,
+       students.DATE_BIRTH,
+       students_hobbies.Name
+FROM students,
+     students_hobbies
+WHERE students.N_z= students_hobbies.N_z;
 ```
 
 ##### Композиция таблиц
@@ -208,15 +208,15 @@ WHERE Students.N_z= Stud_hobby.N_z;
 -- получение информации о студентах из групп 2011,2012,3014 и их хобби
 
 ```sql
-SELECT Students.N_z,
-       Students.Name,
-       Students.Surname,
-       Students.DATE_BIRTH,
-       Stud_hobby.Name
-FROM Students,
-     Stud_hobby
-WHERE Students.N_z= Stud_hobby.N_z
-  AND Students.N_gr IN (2011,
+SELECT students.N_z,
+       students.Name,
+       students.Surname,
+       students.DATE_BIRTH,
+       students_hobbies.Name
+FROM students,
+     students_hobbies
+WHERE students.N_z= students_hobbies.N_z
+  AND students.N_gr IN (2011,
                         2012,
                         3014);
 ```
@@ -235,8 +235,8 @@ WHERE Students.N_z= Stud_hobby.N_z
 
 ```sql
 SELECT S1.*
-FROM Students S1,
-     Students S2
+FROM students S1,
+     students S2
 WHERE S1.Surname=S2.Surname
   AND S1.N_z<>S2.N_z;
 ```
@@ -276,14 +276,14 @@ JOIN _таблица2_ ON _таблица1.связующее_поле = таб�
 ```sql
 Select s.*
 FROM students s
-INNER JOIN stud_hobby sh on s.n_z = sh.n_z;
+INNER JOIN students_hobbies sh on s.n_z = sh.n_z;
 ```
 
 или
 
 ```sql
 Select students.*
-FROM students s, stud_hobby sh
+FROM students s, students_hobbies sh
 WHERE s.n_z = sh.n_z;
 ```
 
@@ -292,16 +292,15 @@ WHERE s.n_z = sh.n_z;
 ```sql
 Select s.*, sh.*
 FROM students s
-LEFT JOIN stud_hobby sh on s.n_z = sh.n_z;
+LEFT JOIN students_hobbies sh on s.n_z = sh.n_z;
 ```
 
 или с использованием (+)
 
 ```sql
 Select s.*, sh.*
-FROM students s, stud_hobby sh
+FROM students s, students_hobbies sh
 where s.n_z  = sh.n_z (+)
-
 ```
 
 ![left](https://www.w3schools.com/sql/img_leftjoin.gif)
@@ -311,14 +310,14 @@ where s.n_z  = sh.n_z (+)
 ```sql
 Select s.*, sh.*
 FROM students s
-RIGHT JOIN stud_hobby sh on s.n_z = sh.n_z;
+RIGHT JOIN students_hobbies sh on s.n_z = sh.n_z;
 ```
 
 или
 
 ```sql
 Select s.*, sh.*
-FROM students s, stud_hobby sh
+FROM students s, students_hobbies sh
 where s.n_z (+)= sh.n_z
 ```
 
@@ -329,7 +328,7 @@ where s.n_z (+)= sh.n_z
 ```sql
 Select s.*, sh.*
 FROM students s
-FULL OUTER JOIN stud_hobby sh on s.n_z = sh.n_z;
+FULL OUTER JOIN students_hobbies sh on s.n_z = sh.n_z;
 ```
 
 ![full](https://www.w3schools.com/sql/img_fulljoin.gif)
@@ -366,10 +365,10 @@ FULL OUTER JOIN stud_hobby sh on s.n_z = sh.n_z;
 
 ```sql
 SELECT name
-FROM hobby
+FROM hobbies
 WHERE risk =
     (SELECT max(risk)
-     FROM hobby)
+     FROM hobbies)
 ```
 
 **Примечание**
@@ -381,7 +380,7 @@ WHERE risk =
 SELECT *
 FROM
   (SELECT name
-   FROM hobby
+   FROM hobbies
    ORDER BY risk DESC)
 WHERE rownum <= 1
 ```
@@ -392,7 +391,7 @@ WHERE rownum <= 1
 
 ```sql
 SELECT name
-FROM hobby
+FROM hobbies
 ORDER BY risk DESC FETCH FIRST 1 ROWS ONLY
 ```
 
@@ -406,10 +405,10 @@ ORDER BY risk DESC FETCH FIRST 1 ROWS ONLY
 
 ```sql
 SELECT N_z
-FROM Students
+FROM students
 WHERE N_z NOT IN
     (SELECT DISTINCT N_z
-     FROM Stud_hobby);
+     FROM students_hobbies);
 ```
 
 **Обратите внимание: использование вложенных запросов, когда его можно заменить на запрос с использование соединения таблиц - плохой подход. Используйте в первую очередь соединение таблиц. Во-первых, это быстрее - оптимизатор запросов в принципе может компенсировать разницу в скорости, но не всегда. Во-вторых, читаемость кода заметно ниже при использовании вложенности.**
@@ -420,19 +419,19 @@ WHERE N_z NOT IN
 
 ```sql
 SELECT N_z
-FROM Students
+FROM students
 WHERE N_z IN
     (SELECT DISTINCT N_z
-     FROM Stud_hobby);
+     FROM students_hobbies);
 ```
 
 -- Эту задачу можно решить путем простого соединения таблиц
 
 ```sql
 SELECT N_z
-FROM Students,
-     Stud_hobby
-WHERE Students.N_z= Stud_hobby.N_z;
+FROM students,
+     students_hobbies
+WHERE students.N_z= students_hobbies.N_z;
 ```
 
 **Коррелированные вложенные подзапросы**
@@ -442,15 +441,15 @@ WHERE Students.N_z= Stud_hobby.N_z;
 -- вывести фамилии студентов, названия тех их хобби, которыми каждый из них увлекается дольше всего
 
 ```sql
-SELECT ST.Surname,
-       STH.Name
-FROM Students ST,
-     Stud_hobby STH
-WHERE STH.N_z=ST.N_z
-  AND STH.DATE_START=
+SELECT s.Surname,
+       st.Name
+FROM students s,
+     students_hobbies st
+WHERE st.N_z=s.N_z
+  AND st.DATE_START=
     (SELECT MIN(DATE_START)
-     FROM Stud_hobby
-     WHERE N_z=ST.N_z);
+     FROM students_hobbies
+     WHERE N_z=s.N_z);
 ```
 
 И ещё раз, этот запрос можно выполнить эффективнее [Однострочные вложенные подзапросы](#однострочные-вложенные-подзапросы)
@@ -473,10 +472,10 @@ SELECT name,
        surname,
        n_group,
        CASE
-           WHEN average_score > 4.5 THEN 'отличник'
-           WHEN average_score > 3.7
-                AND average_score <= 4.5 THEN 'хорошист'
-           WHEN average_score <= 3.7 THEN 'троешник'
+           WHEN score > 4.5 THEN 'отличник'
+           WHEN score > 3.7
+                AND score <= 4.5 THEN 'хорошист'
+           WHEN score <= 3.7 THEN 'троешник'
            ELSE 'что ты такое?'
        END AS status
 FROM students
