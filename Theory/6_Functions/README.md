@@ -216,6 +216,18 @@ SELECT to_char(sysdate,'Month')||'is a special time' FROM dual;
 SELECT to_char(sysdate,'fmMonth')||'is a special time' FROM dual;
 ```
 
+Ниже на картинках представлены возможные значения, которые можно использовать в запросе
+
+Также `to_char` можно и нужно использовать не только в select, но в where, group by, having
+
+Пример:
+
+```sql
+Select *
+from students
+where to_char(date_birth, 'RR') = 99
+```
+
 ![date1](./img/date1.png)
 
 ![date2](./img/date2.png)
@@ -266,3 +278,16 @@ FROM dual;
 ```
 
 Вернёт 123 is a match
+
+Пример выше проверяет `substr(1234,1,3)` на соответствие каждому варианту ниже
+
+Возможно и такое использование
+
+```sql
+Select
+    CASE
+        WHEN substr(1234,1,3) = '134' and substr(1234,2,1) = '1' THEN '1'
+        ELSE 'no'
+    END
+FROM dual;
+```
