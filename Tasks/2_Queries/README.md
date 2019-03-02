@@ -47,7 +47,7 @@ where n_group = :n_group
 8. Вывести 3 хобби с максимальным риском
 9. Для каждой группы в одном запросе вывести количество студентов, максимальный балл в группе, средний балл в группе, минимальный балл в группе
 10. Вывести студента/ов, который/ые имеют наибольший балл в заданной группе
-11. Аналогично 11 заданию, но вывести в одном запросе для каждой группы студента с максимальным баллом.
+11. Аналогично 10 заданию, но вывести в одном запросе для каждой группы студента с максимальным баллом.
 
 ## Многотабличные запросы
 
@@ -102,3 +102,82 @@ where n_group = :n_group
     | 3     | 1    | 2    | 1    | 1    |
     | 4     | 4    | 3    | 3    | 3    |
     | 5     | 1    | 1    | 1    | 0    |
+
+## Разное
+
+1. Вывести ФИО и ранк студентов в зависимости от их среднего балла. Если существует 2 и более студентов с одинаковым баллом, то они должны идти под одинаковым номером. Сделать 2 варианта решения:
+   - Без пропусков номеров (не важно сколько студентов имеют одинаковый балл, следующий студент с отличающимся баллом будет иметь следующий ранк (6 студентов с одинаковы баллом и ранком - 6, следующий студент ранк 7))
+   - С пропуском номеров (если 3 студента 6 номер, то следующий должен быть иметь 9 ранк)
+
+Пример вывода результата для 1 варианта:
+
+| NAME      | SURNAME     | AVERAGE_SCORE | RANK |
+| --------- | ----------- | ------------- | ---- |
+| Татьяна   | Акимова     | 4.98          | 1    |
+| Шарлотта  | Калла       | 4.67          | 2    |
+| Виктория  | Воронцов    | 4.63          | 3    |
+| Ульяна    | Кайшева     | 4.37          | 4    |
+| Анастасия | Овсянникова | 4.25          | 5    |
+| Виктория  | Николаева   | 4.23          | 6    |
+| Нуль      | Нулёвый     | 4.23          | 6    |
+| Николай   | Борисов     | 4.22          | 7    |
+| Артём     | Иван        | 4.03          | 8    |
+| Иван      | Иванов      | 4.02          | 9    |
+
+2. Существует таблица заказов и таблица пользователей. Client_id & Driver_id внешние ключи на Users_id в таблице пользователей. Статус может принимать следующие значени: `('completed', 'cancelled_by_driver', 'cancelled_by_client')`. Атрибут Role может принимать значение: `('client', 'driver', 'partner')`. **Задание:** напишите запрос, который позволяет найти коэффициент отмены запросов незабаненными пользователями в заданный период 1 октября 2013 и 3 октября 2013. Запрос должен вернуть следующий результат для готовых данных (данные в таблице - не единственный вариант проверки написанного кода, будьте внимательнее. Главное правильно решить задачу, а не вывести правильный результа):
+
+   | Day        | Cancellation Rate |
+   | ---------- | ----------------- |
+   | 2013-10-01 | 0.33              |
+   | 2013-10-02 | 0.00              |
+   | 2013-10-03 | 0.50              |
+
+   Скрипт создания таблиц и добавления данных:
+
+   ```sql
+   CREATE TABLE  "USERS"
+   ("USERS_ID" NUMBER,
+   "BANNED" VARCHAR2(50),
+   "ROLE" VARCHAR2(200),
+   CONSTRAINT "USERS_CHECK_ROL" CHECK ( "ROLE" in ('client', 'driver','partner')) ENABLE,
+   CONSTRAINT "USERS_CON" PRIMARY KEY ("USERS_ID")
+   USING INDEX  ENABLE
+   )
+   /
+   CREATE TABLE  "TRIPS"
+   ("ID" NUMBER,
+   "CLIENT_ID" NUMBER,
+   "DRIVER_ID" NUMBER,
+   "CITY_ID" NUMBER,
+   "STATUS" VARCHAR2(200),
+   "REQUEST_AT" VARCHAR2(50),
+   CONSTRAINT "TRIPS_CHECK_CON" CHECK ( "STATUS" in ('completed', 'cancelled_by_driver', 'cancelled_by_client')) ENABLE,
+   CONSTRAINT "TRIPS_CON" PRIMARY KEY ("ID")
+   USING INDEX  ENABLE
+   )
+   /
+   ALTER TABLE  "TRIPS" ADD CONSTRAINT "TRIPS_FK1" FOREIGN KEY ("CLIENT_ID")
+       REFERENCES  "USERS" ("USERS_ID") ENABLE
+   /
+   ALTER TABLE  "TRIPS" ADD CONSTRAINT "TRIPS_FK2" FOREIGN KEY ("DRIVER_ID")
+       REFERENCES  "USERS" ("USERS_ID") ENABLE
+   /
+   insert into Users (Users_Id, Banned, Role) values ('1', 'No', 'client');
+   insert into Users (Users_Id, Banned, Role) values ('2', 'Yes', 'client');
+   insert into Users (Users_Id, Banned, Role) values ('3', 'No', 'client');
+   insert into Users (Users_Id, Banned, Role) values ('4', 'No', 'client');
+   insert into Users (Users_Id, Banned, Role) values ('10', 'No', 'driver');
+   insert into Users (Users_Id, Banned, Role) values ('11', 'No', 'driver');
+   insert into Users (Users_Id, Banned, Role) values ('12', 'No', 'driver');
+   insert into Users (Users_Id, Banned, Role) values ('13', 'No', 'driver');
+    insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('1', '1', '10', '1', 'completed', '2013-10-01');
+   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('2', '2', '11', '1', 'cancelled_by_driver', '2013-10-01');
+   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('3', '3', '12', '6', 'completed', '2013-10-01');
+   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('4', '4', '13', '6', 'cancelled_by_client', '2013-10-01');
+   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('5', '1', '10', '1', 'completed', '2013-10-02');
+   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('6', '2', '11', '6', 'completed', '2013-10-02');
+   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('7', '3', '12', '6', 'completed', '2013-10-02');
+   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('8', '2', '12', '12', 'completed', '2013-10-03');
+   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('9', '3', '10', '12', 'completed', '2013-10-03');
+   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('10', '4', '13', '12', 'cancelled_by_driver', '2013-10-03');
+   ```
