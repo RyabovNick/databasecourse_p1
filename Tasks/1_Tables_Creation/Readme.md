@@ -262,7 +262,7 @@ REFERENCES HOBBIES (ID)
 Insert into students (name, surname, n_group, score, address, date_birth) values ('Ivan', 'Ivanov', 2253, 4.8, 'г. Дубна, пр-кт. Боголюбова, д.15, кв.31', '28/01/2000')
 ```
 
-добавит новую строку в таблицу студенты. Если вы хотите выполнить много insert, то либо воспользуйте [SQL Scripts](../Readme.md) пункт 17
+добавит новую строку в таблицу студенты. Если вы хотите выполнить много insert, то либо воспользуйте [SQL Scripts](../README.md) пункт 17
 
 или может помочь следующая конструкция
 
