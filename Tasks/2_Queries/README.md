@@ -103,6 +103,203 @@ where n_group = :n_group
     | 4     | 4    | 3    | 3    | 3    |
     | 5     | 1    | 1    | 1    | 0    |
 
+## UPDATE & DELETE & INSERT
+
+Ниже представлен скрипт, который создаёт такие же таблицы, с которыми мы работали ранее, только с символом \$ в конце. Скрипт удаляет старую таблицу, создаёт новую и заполняет её данными. Его можно добавить в SQL Workshop - SQL Scripts и запускать каждый раз, когда понадобиться. Это нужно для того, чтобы вы могли спокойно поэксперементировать с изменением и удалением данных.
+
+**Обратите внимание на дату!!!**
+
+```sql
+/*
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+В приведённом скрипте формат даты - DD-MM-YYYY
+Если у вас стоит другой - будет ошибка.
+Для изменения даты зайдите в правый верхний угол - preferences.
+В DEFAULT DATE FORMATE введите DD-MM-YYYY
+Сохраните и перезайдите в apex.oracle
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+*/
+/*
+    Удаление таблиц, последовательностей, триггеров
+*/
+DROP TABLE STUDENTS_HOBBIES$;
+DROP SEQUENCE STUDENTS_HOBBIES$_SEQ;
+DROP TABLE STUDENTS$;
+DROP SEQUENCE STUDENTS$_SEQ;
+DROP TABLE HOBBIES$;
+DROP SEQUENCE HOBBIES$_SEQ;
+/
+
+/*
+    Создание ранее используемых таблиц с $ в конце
+*/
+CREATE table STUDENTS$ (
+    N_Z        NUMBER(5,0),
+    NAME       VARCHAR2(255) NOT NULL,
+    SURNAME    VARCHAR2(255),
+    N_GROUP    NUMBER(4,0) NOT NULL,
+    SCORE      NUMBER(3,2) NOT NULL,
+    ADDRESS    VARCHAR2(1000),
+    DATE_BIRTH DATE,
+    constraint  STUDENTS$_PK primary key (N_Z)
+)
+/
+
+CREATE sequence STUDENTS$_SEQ
+/
+
+CREATE trigger BI_STUDENTS$
+  before insert on STUDENTS$
+  for each row
+begin
+  if :NEW.N_Z is null then
+    select STUDENTS$_SEQ.nextval into :NEW.N_Z from sys.dual;
+  end if;
+end;
+/
+
+alter table STUDENTS$ add
+constraint SCORE_CHECK
+check (SCORE >= 2 and SCORE <=5)
+/
+
+CREATE table HOBBIES$ (
+    ID        NUMBER(5,0),
+    NAME       VARCHAR2(255) NOT NULL,
+    RISK    NUMBER(4,2) NOT NULL,
+    constraint  HOBBIES$_PK primary key (ID)
+)
+/
+
+CREATE sequence HOBBIES$_SEQ
+/
+
+CREATE trigger BI_HOBBIES$
+  before insert on HOBBIES$
+  for each row
+begin
+  if :NEW.ID is null then
+    select HOBBIES$_SEQ.nextval into :NEW.ID from sys.dual;
+  end if;
+end;
+/
+
+alter table HOBBIES$ add
+constraint RISK_CHECK
+check (RISK >= 0 and RISK <= 10)
+/
+
+CREATE table STUDENTS_HOBBIES$ (
+    ID          NUMBER(5,0) NOT NULL,
+    N_Z         NUMBER(5,0) NOT NULL,
+    HOBBY_ID    NUMBER(5,0) NOT NULL,
+    DATE_START  DATE NOT NULL,
+    DATE_FINISH DATE,
+    constraint  STUDENTS_HOBBIES$_PK primary key (ID)
+)
+/
+
+CREATE sequence STUDENTS_HOBBIES$_SEQ
+/
+
+CREATE trigger BI_STUDENTS_HOBBIES$
+  before insert on STUDENTS_HOBBIES$
+  for each row
+begin
+  if :NEW.ID is null then
+    select STUDENTS_HOBBIES$_SEQ.nextval into :NEW.ID from sys.dual;
+  end if;
+end;
+/
+
+ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK
+FOREIGN KEY (N_Z)
+REFERENCES STUDENTS$ (N_Z)
+
+/
+ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK1
+FOREIGN KEY (HOBBY_ID)
+REFERENCES HOBBIES$ (ID)
+
+/
+
+
+/*
+    Добавление данных
+*/
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (1,'Иван','Иванов',2222,'09-09-1999',4.02);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (2,'Михаил','Михайлов',4032,'03-12-1997',3.25);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (3,'Виктория','Николаева',4011,'23-11-1994',4.23);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (4,'Нуль','Нулёвый',2222,'04-05-1998',4.23);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (5,'Евгения','Сидорова',2222,'04-05-1996',3.59);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (6,'Сергей','Иванцов',3011,'24-12-1995',3.85);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (7,'Николай','Борисов',3011,'12-08-2000',4.22);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (8,'Виктория','Воронцов',3011,'11-11-1999',4.63);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (9,'Марина','Кузнецов',3011,'25-01-1998',3.11);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (10,'Джон','Уик',3011,'',3.45);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (11,'Виктор','Понедельник',3011,'23-11-1994',3.98);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (12,'Алиса','Васильченко',2222,'',2.98);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (13,'Артём','Иван',2222,'28-05-1999',4.03);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (14,'Шарлотта','Калла',2222,'25-05-1996',4.67);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (15,'Юлия','Белорукова',4011,'28-11-1997',3.58);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (16,'Татьяна','Акимова',4011,'23-01-1995',4.98);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (17,'Ульяна','Кайшева',4011,'03-03-1998',4.37);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (19,'Никита','Крюков',4011,'08-04-1999',2.55);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (20,'Иван','Шаповалов',4032,'29-04-2002',2);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (21,'Анастасия','Овсянникова',4032,'31-12-1998',4.25);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (22,'Людмила','Иванова',4032,'05-02-1993',3.65);
+INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (23,'Валентина','Сидорова',4032,'',3.76);
+
+
+INSERT INTO HOBBIES$ (id, risk, name) VALUES (2,0.3,'Теннис');
+INSERT INTO HOBBIES$ (id, risk, name) VALUES (5,0.4,'Лыжные');
+INSERT INTO HOBBIES$ (id, risk, name) VALUES (7,0.2,'Фехтование');
+INSERT INTO HOBBIES$ (id, risk, name) VALUES (1,0.8,'Футбол');
+INSERT INTO HOBBIES$ (id, risk, name) VALUES (3,0.5,'Баскетбол');
+INSERT INTO HOBBIES$ (id, risk, name) VALUES (4,0.4,'Биатлон');
+INSERT INTO HOBBIES$ (id, risk, name) VALUES (6,0.6,'Волейбол');
+INSERT INTO HOBBIES$ (id, risk, name) VALUES (8,0,'Музыка');
+
+
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (1,2,3,'15-03-2004','');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (2,2,5,'18-02-2009','');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (3,3,4,'12-11-1993','11-12-2016');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (4,4,5,'14-03-2004','03-05-2006');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (5,5,8,'18-06-2014','09-08-2017');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (6,6,7,'19-03-2018','15-03-2017');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (7,7,4,'07-04-2017','');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (8,8,2,'09-11-2018','');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (9,8,1,'28-02-2019','02-03-2019');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (10,9,4,'19-12-2009','24-12-2009');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (11,9,5,'18-06-2013','25-09-2018');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (12,11,6,'18-06-2014','');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (13,12,7,'23-01-1999','14-04-2004');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (14,1,1,'19-07-2017','');
+INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (15,16,5,'13-02-2018','');
+```
+
+## Задания
+
+Все задания выполняйте на созданных при помощи скрипта выше таблицах.
+
+Задания не всегда идут по повышению уровня сложности. Поэтому не обязательно выполнять их по порядку.
+
+1. Удалите всех студентов с неуказанной датой рождения
+2. Измените дату рождения всех студентов, с неуказанной датой рождения на 01-01-1999
+3. Удалите из таблицы студента с номером зачётки 21
+4. Уменьшите риск хобби, которым занимается наибольшее количество человек
+5. Добавьте всем студентам, которые занимаются хотя бы одним хобби 0.01 балл
+6. Удалите все завершенные хобби студентов
+7. Добавьте студенту с n_z 4 хобби с id 5. date_start - '15-11-2009, date_finish - null
+8. Напишите запрос, который удаляет самую раннюю из студентов_хобби запись, в случае, если студент делал перерыв в хобби (т.е. занимался одним и тем же несколько раз)
+9. Поменяйте название хобби всем студентам, кто занимается футболом - на бальные танцы, а кто баскетболом - на вышивание крестиком.
+10. Добавьте в таблицу хобби новое хобби с названием "Учёба"
+11. У всех студентов, средний балл которых меньше 3.2 поменяйте во всех хобби (если занимается чем-либо) и добавьте (если ничем не занимается), что студент занимается хобби из 10 задания
+12. Переведите всех студентов не 4 курса на курс выше
+13. Удалите из таблицы студента с номером зачётки 2
+14. Измените средний балл у всех студентов, которые занимаются хобби более 10 лет на 5.00
+15. Удалите информацию о хобби, если студент начал им заниматься раньше, чем родился
+
 ## Разное
 
 1. Вывести ФИО и ранк студентов в зависимости от их среднего балла. Если существует 2 и более студентов с одинаковым баллом, то они должны идти под одинаковым номером. Сделать 2 варианта решения:
