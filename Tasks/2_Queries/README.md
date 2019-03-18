@@ -215,11 +215,13 @@ end;
 ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK
 FOREIGN KEY (N_Z)
 REFERENCES STUDENTS$ (N_Z)
+ON DELETE CASCADE;
 
 /
 ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK1
 FOREIGN KEY (HOBBY_ID)
 REFERENCES HOBBIES$ (ID)
+ON DELETE CASCADE;
 
 /
 
@@ -278,7 +280,7 @@ INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUE
 INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (15,16,5,'13-02-2018','');
 ```
 
-## Задания
+## Задания на изменение/удаление/добавление
 
 Все задания выполняйте на созданных при помощи скрипта выше таблицах.
 
@@ -299,6 +301,25 @@ INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUE
 13. Удалите из таблицы студента с номером зачётки 2
 14. Измените средний балл у всех студентов, которые занимаются хобби более 10 лет на 5.00
 15. Удалите информацию о хобби, если студент начал им заниматься раньше, чем родился
+
+## Задания на изменение/удаление/добавление без каскадного удаления/изменения
+
+В предыдущих запросах внешний ключ был создан с параметром `ON DELETE CASCADE`.
+
+Поменяйте в скрипте на эти строки:
+
+```sql
+ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK
+FOREIGN KEY (N_Z)
+REFERENCES STUDENTS$ (N_Z)
+
+/
+ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK1
+FOREIGN KEY (HOBBY_ID)
+REFERENCES HOBBIES$ (ID)
+```
+
+И выполните все задания выше ещё раз. В некоторых ситуация будет нарушение целостности данных (например, в 1). Решите эти проблемы (не обязательно выполнять задания в один запрос)
 
 ## Разное
 
