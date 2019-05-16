@@ -2,6 +2,8 @@
 
 Ниженаписанное **обязательно** к прочтению. Уделите время, чтобы понять некоторую стрктуру и правила этого курса.
 
+[Вопросы к зачёту](./RatingSystem/Questions.md)
+
 [Балльно-рейтинговая система](./RatingSystem)
 
 [Таблица с баллами](https://docs.google.com/spreadsheets/d/1SjxLtMBMPOKu_99-UAW8TZCgqKq0L3h-a3E6X7XhHSU/edit?usp=sharing)
