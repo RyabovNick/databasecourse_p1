@@ -376,6 +376,17 @@ WHERE risk =
 
 Но sql такой язык, в котором один и тот же запрос можно выполнить множеством способов. Есть вариант лучше вывести максимальный
 
+##### PostgreSQL
+
+```sql
+SELECT *
+FROM hobbies h
+ORDER BY h.risk DESC
+LIMIT 1
+```
+
+##### Oracle
+
 ```sql
 SELECT *
 FROM
