@@ -4,6 +4,54 @@
 
 ### Создание таблицы
 
+#### PostgreSQL
+
+##### Types
+
+https://www.postgresql.org/docs/12/datatype.html
+
+**Numeric:**
+https://www.postgresql.org/docs/9.2/datatype-numeric.html
+
+smallint
+integer
+bigint
+decimal
+point
+numeric
+point
+real
+double
+smallserial
+serial
+bigserial
+
+**Date/Time:**
+timestamp without time zone
+timestamp with time zone
+date
+time without time zone
+time with time zone
+interval
+
+**character:**
+varchar(n) - текст с n - максимальным значением символов
+text - текст без ограничений длины
+
+```sql
+CREATE TABLE supplier (
+	id integer(10) PRIMARY KEY,
+	name varchar(255),
+	city varchar(100),
+	street varchar(100),
+	house varchar(20),
+	phone varchar(20),
+	email varchar(100) NOT NULL UNIQUE
+)
+```
+
+---
+
 Оператор CREATE служит для создания любого типа объектов, из которых состоит база данных, в том числе таблиц.
 
 Синтаксис команды создания таблицы:
