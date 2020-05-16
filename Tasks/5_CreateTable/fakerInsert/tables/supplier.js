@@ -24,6 +24,8 @@ VALUES`
 		const house = faker.random.number(200)
 		const phone = faker.phone.phoneNumber()
 		const email = faker.internet.email()
+		// если нужна дата, то нужно преобразовать в ISO тип
+		// const date = faker.date.past(10).toISOString()
 
 		// не используем кавычки (''), когда добавляется число
 		insertValues.push(

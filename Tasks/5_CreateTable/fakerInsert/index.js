@@ -24,10 +24,22 @@ for (let i = minIDSupplier - 1; i < maxIDSupplier; i++) {
 	const house = faker.random.number(200)
 	const phone = faker.phone.phoneNumber()
 	const email = faker.internet.email()
+	// если нужна дата, то нужно преобразовать в ISO тип
+	// const date = faker.date.past(10).toISOString()
+
+	// если нужно сгенерировать частично null, частично значение
+	// можно использовать подобную конструкцию
+	// т.е. ниже примерно в 70% будет значение, а в 30% - null
+	let field = null
+	if (faker.random.number(10) > 3) {
+		// обратите внимание, что null не должен быть в кавычках,
+		// а дата должна быть обязательно в кавычках
+		field = `'${faker.date.past(10).toISOString()}'`
+	}
 
 	// не используем кавычки (''), когда добавляется число
 	insertValues.push(
-		`('${name}', '${city}', '${street}', ${house}, '${phone}', '${email}')`,
+		`('${name}', '${city}', '${street}', ${house}, '${phone}', ${field})`,
 	)
 }
 
