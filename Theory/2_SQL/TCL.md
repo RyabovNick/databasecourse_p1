@@ -33,12 +33,12 @@
 
 Более подробнее: https://www.postgresql.org/docs/12/transaction-iso.html
 
-| Isolation Level  | Dirty Read      | Nonrepeatable Read | Phantom Read    | Serialization Anomaly |
-| ---------------- | --------------- | ------------------ | --------------- | --------------------- |
-| Read uncommitted | Невозможно в PG | Возможно           | Возможно        | Возможно              |
-| Read committed   | Не возможно     | Возможно           | Возможно        | Возможно              |
-| Repeatable read  | Не возможно     | Не возможно        | Невозможно в PG | Возможно              |
-| Serializable     | Не возможно     | Не возможно        | Не возможно     | Не возможно           |
+| Isolation Level  | Dirty Read       | Nonrepeatable Read | Phantom Read     | Serialization Anomaly |
+| ---------------- | ---------------- | ------------------ | ---------------- | --------------------- |
+| Read uncommitted | Не возможно в PG | Возможно           | Возможно         | Возможно              |
+| Read committed   | Не возможно      | Возможно           | Возможно         | Возможно              |
+| Repeatable read  | Не возможно      | Не возможно        | Не возможно в PG | Возможно              |
+| Serializable     | Не возможно      | Не возможно        | Не возможно      | Не возможно           |
 
 #### Read Commited
 
