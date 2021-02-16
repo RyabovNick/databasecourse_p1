@@ -8,7 +8,7 @@
 
 Для решения поставленной задачи нам понадобится таблица студентов. Нам необходимо как-то идентифицировать студента. Конечно, мы можем это сделать по имени, фамилии и прочим характеристикам, но это не даст нам 100% гарантии, что не встретится точно такой же другой студент. Поэтому введём уникальный атрибут - номер зачётки. И весь список атрибутов выглядит следующим образом:
 
-- номер зачётки
+- номер зачётки (id)
 - имя
 - фамилия
 - номер группы
@@ -30,11 +30,135 @@
 
 ![img2](./img/2018-12-25_17-15-33.png)
 
-Составной первичный ключ на номер зачётки и ид хобби может создать некую проблему. При таком проектирование получается, что в таблице не может присутствовать более 1 одинаковой пары n_z & id. Получается, если студент начал заниматься хобби, закончил, а потом решил заняться снова, то заново добавить будет невозможно.
+Составной первичный ключ на номер зачётки и ид хобби может создать некую проблему. При таком проектирование получается, что в таблице не может присутствовать более 1 одинаковой пары id & id. Получается, если студент начал заниматься хобби, закончил, а потом решил заняться снова, то заново добавить будет невозможно.
 
 В таком случае есть выход - создать id для первичного ключа (см картинку ниже (тут такая же проблема - date_start, date_finish должны иметь тип DATE))
 
 ![img3](./img/2018-12-25_17-33-56.png)
+
+## Создание таблиц в PostgreSQL
+
+### Типы данных
+
+https://www.postgresql.org/docs/12/datatype.html
+
+**Numeric:**
+https://www.postgresql.org/docs/12/datatype-numeric.html
+
+**Используйте тип serial для первичного ключа!**
+В PostgreSQL serial - автоинкрементированный тип, т.е. он будет увеличиваться на 1 с каждой добавленной записью. Такое поведение можно сделать при помощи Integer, но тогда придётся в ручную создать последовательность. Serial не совсем тип данных, это скорее короткая запись. Поэтому в таблицах, которые ссылаются на таблицу с serial должен использоваться уже тип integer (bigserial -> bigInt соответственно)!!!
+
+https://www.postgresql.org/docs/12/datatype-numeric.html#DATATYPE-SERIAL
+
+**Date/Time:**
+timestamp without time zone
+timestamp with time zone
+date
+time without time zone
+time with time zone
+interval
+
+**character:**
+varchar(n) - текст с n - максимальным значением символов
+text - текст без ограничений длины
+
+### Create
+
+#### PRIMARY KEY
+
+Создание первичного ключа и дополнительных ограничений на атрибуте:
+
+Так создать первичный ключ можно, если он не составной и не требуется лично установить название ключа (также в примере присутствую NOT NULL (делает атрибут не нулевым) и UNIQUE (значения атрибута должны быть только уникальными)):
+
+```sql
+CREATE TABLE supplier (
+	id serial PRIMARY KEY,
+	name varchar(255),
+	city varchar(100),
+	street varchar(100),
+	house varchar(20),
+	phone varchar(20),
+	email varchar(100) NOT NULL UNIQUE
+)
+```
+
+Так можно создать первичный ключ, если требуется указать составной, т.е. (PRIMARY KEY (key_id, key2_id)) (пример просто аналогичный предыдущему):
+
+```sql
+CREATE TABLE supplier (
+	id serial,
+	name varchar(255),
+	city varchar(100),
+	street varchar(100),
+	house varchar(20),
+	phone varchar(20),
+	email varchar(100) NOT NULL UNIQUE,
+	PRIMARY KEY(id)
+)
+```
+
+Если требуется задать название ключа:
+
+```sql
+CREATE TABLE supplier (
+	id serial,
+	name varchar(255),
+	city varchar(100),
+	street varchar(100),
+	house varchar(20),
+	phone varchar(20),
+	email varchar(100) NOT NULL UNIQUE,
+	CONSTRAINT supplier_id_pk PRIMARY KEY (id)
+)
+```
+
+#### Foreign Key
+
+Допустим, мы хотим добавить таблицу supplier_info, в которой есть ссылка на таблицу supplier. Это можно сделать следующими способами:
+
+1. На той же строчке, что и атрибут, без упоминания атрибута с которым связываем. Удобно, когда в supplier не составной первичный ключ. (Обратите внимание, что supplier_id - integer, а не serial! Это важно)
+
+```sql
+CREATE TABLE supplier_info (
+	id serial PRIMARY KEY,
+	supplier_id integer REFERENCES supplier,
+	info varchar(5000)
+)
+```
+
+2. На той же строке, но с указанием атрибута, с которым связываем
+
+```sql
+CREATE TABLE supplier_info (
+	id serial PRIMARY KEY,
+	supplier_id integer REFERENCES supplier (id),
+	info varchar(5000)
+)
+```
+
+3. Внутри Create Table, но уже после указания атрибутов. Этот вариант даёт возможность самостоятельно назвать внешний ключ
+
+```sql
+CREATE TABLE supplier_info (
+	id serial PRIMARY KEY,
+	supplier_id integer,
+	info varchar(5000),
+	CONSTRAINT supplier_info_supplier_id_fk FOREIGN KEY (supplier_id)
+		REFERENCES supplier (id)
+)
+```
+
+## Заполнение данными
+
+```sql
+INSERT INTO supplier (name, city, street, house, phone, email)
+VALUES ('Шашкова, Лыткин and Мухин', 'Якушеваchester', 'Марина пл.', '181', '(958)743-94-34', '.19@ya.ru');
+
+```
+
+Более подробно:
+
+https://www.postgresql.org/docs/12/sql-insert.html
 
 ## Создание таблиц в Oracle
 
@@ -48,8 +172,8 @@
 
 1. Названия атрибутов. **Будьте внимательны** - в качестве названия атрибута нельзя использовать зарезервированные слова в oracle в качестве названий. Например: group, order, select, from, where, count etc.
 2. Тип данных. Для цифр используется Number, для текста - VARCHAR2. Максимальный размер Number - 38 символов (указывается в precision обязательно). Максимальный размер VARCHAR2 - 4000, указывается в Scale обязательно. Если надо хранить гораздо больше символов, есть другие типы, например различные BLOB.
-3. Для цифр - Precision - сколько всего символов. Не путайте, это не максимально число, а максимальное количество символов. В n_z у нас максимальное число это 99999. В scale указывается сколько из чисел, указанных в precision идут после запятой. Т.е. в атрибуте score максимальное число может быть 9,99. А не 999,99 - это неверно.
-4. Некоторые атрибуты будут не нулевые. Т.е. у студента должно быть имя обязательно, иначе добавить мы его не можем. Должна быть группа и средний балл. Остальные атрибуты могут и null равны (мы не выбрали n_z, но как мы сделаем его первичным ключом он станет не нулевым автоматически)
+3. Для цифр - Precision - сколько всего символов. Не путайте, это не максимально число, а максимальное количество символов. В id у нас максимальное число это 99999. В scale указывается сколько из чисел, указанных в precision идут после запятой. Т.е. в атрибуте score максимальное число может быть 9,99. А не 999,99 - это неверно.
+4. Некоторые атрибуты будут не нулевые. Т.е. у студента должно быть имя обязательно, иначе добавить мы его не можем. Должна быть группа и средний балл. Остальные атрибуты могут и null равны (мы не выбрали id, но как мы сделаем его первичным ключом он станет не нулевым автоматически)
 5. Каждому атрибуту можно сделать значение по умолчанию. Т.е. если мы при заполнении его не указали, оно будет равно default значению.
 6. Ну и назвать табличку не забудьте, да.
 
@@ -95,14 +219,14 @@
 
 ```sql
 CREATE table "STUDENTS" (
-    "N_Z"        NUMBER(5,0),
+    "ID"        NUMBER(5,0),
     "NAME"       VARCHAR2(255) NOT NULL,
     "SURNAME"    VARCHAR2(255),
     "N_GROUP"    NUMBER(4,0) NOT NULL,
     "SCORE"      NUMBER(3,2) NOT NULL,
     "ADDRESS"    VARCHAR2(1000),
     "DATE_BIRTH" DATE,
-    constraint  "STUDENTS_PK" primary key ("N_Z")
+    constraint  "STUDENTS_PK" primary key ("ID")
 )
 /
 
@@ -113,8 +237,8 @@ CREATE trigger "BI_STUDENTS"
   before insert on "STUDENTS"
   for each row
 begin
-  if :NEW."N_Z" is null then
-    select "STUDENTS_SEQ".nextval into :NEW."N_Z" from sys.dual;
+  if :NEW."ID" is null then
+    select "STUDENTS_SEQ".nextval into :NEW."ID" from sys.dual;
   end if;
 end;
 /
@@ -127,7 +251,7 @@ check (SCORE >= 2 and SCORE <=5)
 
 Т.е. у нас создаётся таблица, с указанными названиями атрибутов, типами и первичный ключ.
 
-Затем создаётся последовательность и триггер для автоматического заполнения n_z при заполнении таблицы. Я поясню, что происходит в триггере. Это язык pl/sql. Триггер выполняется до (`before`) добавления (`insert`) в таблицу. Триггер выполняется для каждой строки (`for each row`) дальше открывается выполняемая секция (всё, что между `begin` & `end`). Если новое значение, добавляемое в n_z равно null (т.е. не указано), то взять из последовательности следующее значение и положить в n_z. Затем `insert` продолжит выполняться.
+Затем создаётся последовательность и триггер для автоматического заполнения id при заполнении таблицы. Я поясню, что происходит в триггере. Это язык pl/sql. Триггер выполняется до (`before`) добавления (`insert`) в таблицу. Триггер выполняется для каждой строки (`for each row`) дальше открывается выполняемая секция (всё, что между `begin` & `end`). Если новое значение, добавляемое в id равно null (т.е. не указано), то взять из последовательности следующее значение и положить в id. Затем `insert` продолжит выполняться.
 
 И последнее - создаётся CHECK. Если попытаться в score добавить значение выше или ниже указанных, то будет выведена ошибка.
 
@@ -141,14 +265,14 @@ check (SCORE >= 2 and SCORE <=5)
 
 ```sql
 CREATE table STUDENTS (
-    N_Z        NUMBER(5,0),
+    ID        NUMBER(5,0),
     NAME       VARCHAR2(255) NOT NULL,
     SURNAME    VARCHAR2(255),
     N_GROUP    NUMBER(4,0) NOT NULL,
     SCORE      NUMBER(3,2) NOT NULL,
     ADDRESS    VARCHAR2(1000),
     DATE_BIRTH DATE,
-    constraint  STUDENTS_PK primary key (N_Z)
+    constraint  STUDENTS_PK primary key (ID)
 )
 /
 
@@ -159,8 +283,8 @@ CREATE trigger BI_STUDENTS
   before insert on STUDENTS
   for each row
 begin
-  if :NEW.N_Z is null then
-    select STUDENTS_SEQ.nextval into :NEW.N_Z from sys.dual;
+  if :NEW.ID is null then
+    select STUDENTS_SEQ.nextval into :NEW.ID from sys.dual;
   end if;
 end;
 /
@@ -208,7 +332,7 @@ check (RISK >= 0 and RISK <= 10)
 ```sql
 CREATE table STUDENTS_HOBBIES (
     ID          NUMBER(5,0) NOT NULL,
-    N_Z         NUMBER(5,0) NOT NULL,
+    ID         NUMBER(5,0) NOT NULL,
     HOBBY_ID    NUMBER(5,0) NOT NULL,
     DATE_START  DATE NOT NULL,
     DATE_FINISH DATE,
@@ -230,8 +354,8 @@ end;
 /
 
 ALTER TABLE STUDENTS_HOBBIES ADD CONSTRAINT STUDENTS_HOBBIES_FK
-FOREIGN KEY (N_Z)
-REFERENCES STUDENTS (N_Z)
+FOREIGN KEY (ID)
+REFERENCES STUDENTS (ID)
 
 /
 ALTER TABLE STUDENTS_HOBBIES ADD CONSTRAINT STUDENTS_HOBBIES_FK1

@@ -276,7 +276,7 @@ JOIN _таблица2_ ON _таблица1.связующее_поле = таб�
 ```sql
 Select s.*
 FROM students s
-INNER JOIN students_hobbies sh on s.n_z = sh.n_z;
+INNER JOIN students_hobbies sh on s.id = sh.id;
 ```
 
 или
@@ -284,7 +284,7 @@ INNER JOIN students_hobbies sh on s.n_z = sh.n_z;
 ```sql
 Select students.*
 FROM students s, students_hobbies sh
-WHERE s.n_z = sh.n_z;
+WHERE s.id = sh.id;
 ```
 
 3. `LEFT JOIN` выведет на экран все данные, которые есть на пересечении таблиц, а также все данные из таблицы, находящейся слева, которые не попали в пересечение.
@@ -292,7 +292,7 @@ WHERE s.n_z = sh.n_z;
 ```sql
 Select s.*, sh.*
 FROM students s
-LEFT JOIN students_hobbies sh on s.n_z = sh.n_z;
+LEFT JOIN students_hobbies sh on s.id = sh.id;
 ```
 
 или с использованием (+)
@@ -300,7 +300,7 @@ LEFT JOIN students_hobbies sh on s.n_z = sh.n_z;
 ```sql
 Select s.*, sh.*
 FROM students s, students_hobbies sh
-where s.n_z  = sh.n_z (+)
+where s.id  = sh.id (+)
 ```
 
 ![left](https://www.w3schools.com/sql/img_leftjoin.gif)
@@ -310,7 +310,7 @@ where s.n_z  = sh.n_z (+)
 ```sql
 Select s.*, sh.*
 FROM students s
-RIGHT JOIN students_hobbies sh on s.n_z = sh.n_z;
+RIGHT JOIN students_hobbies sh on s.id = sh.id;
 ```
 
 или
@@ -318,7 +318,7 @@ RIGHT JOIN students_hobbies sh on s.n_z = sh.n_z;
 ```sql
 Select s.*, sh.*
 FROM students s, students_hobbies sh
-where s.n_z (+)= sh.n_z
+where s.id (+)= sh.id
 ```
 
 ![right](https://www.w3schools.com/sql/img_rightjoin.gif)
@@ -328,7 +328,7 @@ where s.n_z (+)= sh.n_z
 ```sql
 Select s.*, sh.*
 FROM students s
-FULL OUTER JOIN students_hobbies sh on s.n_z = sh.n_z;
+FULL OUTER JOIN students_hobbies sh on s.id = sh.id;
 ```
 
 ![full](https://www.w3schools.com/sql/img_fulljoin.gif)

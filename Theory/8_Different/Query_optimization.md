@@ -28,8 +28,8 @@ https://docs.oracle.com/cd/E11882_01/server.112/e41573/optimops.htm#PFGRF94582
 ```sql
 SELECT *
 FROM students
-WHERE n_z IN
-    (SELECT n_z
+WHERE id IN
+    (SELECT id
      FROM students_hobbies
      WHERE date_finish IS NULL)
 ```
@@ -41,7 +41,7 @@ WHERE n_z IN
 ```sql
 SELECT students.*
 FROM students, stud_hobby
-WHERE students.n_z = stud_hobby.n_z and stud_hobby.date_finish is null
+WHERE students.id = stud_hobby.id and stud_hobby.date_finish is null
 ```
 
 Именно в такой вид будет преобразован запрос выше. Но используйте сразу его. Обязательно!

@@ -261,7 +261,7 @@ VALUES (value1, value2, value3, ...);
 Пример:
 
 ```sql
-INSERT INTO students (N_Z, name, surname)
+INSERT INTO students (ID, name, surname)
 VALUES (5, 'Иван', 'Иванов');
 ```
 
@@ -312,7 +312,7 @@ WHERE condition;
 ```sql
 UPDATE students
 SET Name = 'Николай', Address = 'Dubna'
-WHERE N_Z = 3;
+WHERE ID = 3;
 ```
 
 Ещё раз. Например, в запросе на обновление данных, если вам надо поменять только одну запись, то используйте первичный ключ. Что-то уникальное.
@@ -352,7 +352,7 @@ WHERE name = 'Николай';
 ```sql
 DELETE
 FROM students
-WHERE n_z = 3;
+WHERE id = 3;
 ```
 
 Если вам надо удалить все данные из таблицы, то:

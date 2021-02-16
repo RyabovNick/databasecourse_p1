@@ -132,14 +132,14 @@ DROP SEQUENCE HOBBIES$_SEQ;
     Создание ранее используемых таблиц с $ в конце
 */
 CREATE table STUDENTS$ (
-    N_Z        NUMBER(5,0),
+    ID        NUMBER(5,0),
     NAME       VARCHAR2(255) NOT NULL,
     SURNAME    VARCHAR2(255),
     N_GROUP    NUMBER(4,0) NOT NULL,
     SCORE      NUMBER(3,2) NOT NULL,
     ADDRESS    VARCHAR2(1000),
     DATE_BIRTH DATE,
-    constraint  STUDENTS$_PK primary key (N_Z)
+    constraint  STUDENTS$_PK primary key (ID)
 )
 /
 
@@ -150,8 +150,8 @@ CREATE trigger BI_STUDENTS$
   before insert on STUDENTS$
   for each row
 begin
-  if :NEW.N_Z is null then
-    select STUDENTS$_SEQ.nextval into :NEW.N_Z from sys.dual;
+  if :NEW.ID is null then
+    select STUDENTS$_SEQ.nextval into :NEW.ID from sys.dual;
   end if;
 end;
 /
@@ -189,7 +189,7 @@ check (RISK >= 0 and RISK <= 10)
 
 CREATE table STUDENTS_HOBBIES$ (
     ID          NUMBER(5,0) NOT NULL,
-    N_Z         NUMBER(5,0) NOT NULL,
+    ID         NUMBER(5,0) NOT NULL,
     HOBBY_ID    NUMBER(5,0) NOT NULL,
     DATE_START  DATE NOT NULL,
     DATE_FINISH DATE,
@@ -211,8 +211,8 @@ end;
 /
 
 ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK
-FOREIGN KEY (N_Z)
-REFERENCES STUDENTS$ (N_Z)
+FOREIGN KEY (ID)
+REFERENCES STUDENTS$ (ID)
 ON DELETE CASCADE;
 
 /
@@ -227,28 +227,28 @@ ON DELETE CASCADE;
 /*
     Добавление данных
 */
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (1,'Иван','Иванов',2222,'09-09-1999',4.02);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (2,'Михаил','Михайлов',4032,'03-12-1997',3.25);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (3,'Виктория','Николаева',4011,'23-11-1994',4.23);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (4,'Нуль','Нулёвый',2222,'04-05-1998',4.23);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (5,'Евгения','Сидорова',2222,'04-05-1996',3.59);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (6,'Сергей','Иванцов',3011,'24-12-1995',3.85);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (7,'Николай','Борисов',3011,'12-08-2000',4.22);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (8,'Виктория','Воронцов',3011,'11-11-1999',4.63);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (9,'Марина','Кузнецов',3011,'25-01-1998',3.11);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (10,'Джон','Уик',3011,'',3.45);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (11,'Виктор','Понедельник',3011,'23-11-1994',3.98);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (12,'Алиса','Васильченко',2222,'',2.98);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (13,'Артём','Иван',2222,'28-05-1999',4.03);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (14,'Шарлотта','Калла',2222,'25-05-1996',4.67);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (15,'Юлия','Белорукова',4011,'28-11-1997',3.58);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (16,'Татьяна','Акимова',4011,'23-01-1995',4.98);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (17,'Ульяна','Кайшева',4011,'03-03-1998',4.37);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (19,'Никита','Крюков',4011,'08-04-1999',2.55);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (20,'Иван','Шаповалов',4032,'29-04-2002',2);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (21,'Анастасия','Овсянникова',4032,'31-12-1998',4.25);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (22,'Людмила','Иванова',4032,'05-02-1993',3.65);
-INSERT INTO STUDENTS$ (n_z, name, surname, n_group, date_birth, score) VALUES (23,'Валентина','Сидорова',4032,'',3.76);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (1,'Иван','Иванов',2222,'09-09-1999',4.02);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (2,'Михаил','Михайлов',4032,'03-12-1997',3.25);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (3,'Виктория','Николаева',4011,'23-11-1994',4.23);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (4,'Нуль','Нулёвый',2222,'04-05-1998',4.23);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (5,'Евгения','Сидорова',2222,'04-05-1996',3.59);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (6,'Сергей','Иванцов',3011,'24-12-1995',3.85);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (7,'Николай','Борисов',3011,'12-08-2000',4.22);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (8,'Виктория','Воронцов',3011,'11-11-1999',4.63);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (9,'Марина','Кузнецов',3011,'25-01-1998',3.11);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (10,'Джон','Уик',3011,'',3.45);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (11,'Виктор','Понедельник',3011,'23-11-1994',3.98);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (12,'Алиса','Васильченко',2222,'',2.98);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (13,'Артём','Иван',2222,'28-05-1999',4.03);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (14,'Шарлотта','Калла',2222,'25-05-1996',4.67);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (15,'Юлия','Белорукова',4011,'28-11-1997',3.58);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (16,'Татьяна','Акимова',4011,'23-01-1995',4.98);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (17,'Ульяна','Кайшева',4011,'03-03-1998',4.37);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (19,'Никита','Крюков',4011,'08-04-1999',2.55);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (20,'Иван','Шаповалов',4032,'29-04-2002',2);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (21,'Анастасия','Овсянникова',4032,'31-12-1998',4.25);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (22,'Людмила','Иванова',4032,'05-02-1993',3.65);
+INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (23,'Валентина','Сидорова',4032,'',3.76);
 
 
 INSERT INTO HOBBIES$ (id, risk, name) VALUES (2,0.3,'Теннис');
@@ -261,21 +261,21 @@ INSERT INTO HOBBIES$ (id, risk, name) VALUES (6,0.6,'Волейбол');
 INSERT INTO HOBBIES$ (id, risk, name) VALUES (8,0,'Музыка');
 
 
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (1,2,3,'15-03-2004','');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (2,2,5,'18-02-2009','');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (3,3,4,'12-11-1993','11-12-2016');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (4,4,5,'14-03-2004','03-05-2006');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (5,5,8,'18-06-2014','09-08-2017');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (6,6,7,'19-03-2018','15-03-2017');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (7,7,4,'07-04-2017','');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (8,8,2,'09-11-2018','');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (9,8,1,'28-02-2019','02-03-2019');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (10,9,4,'19-12-2009','24-12-2009');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (11,9,5,'18-06-2013','25-09-2018');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (12,11,6,'18-06-2014','');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (13,12,7,'23-01-1999','14-04-2004');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (14,1,1,'19-07-2017','');
-INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUES (15,16,5,'13-02-2018','');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (1,2,3,'15-03-2004','');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (2,2,5,'18-02-2009','');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (3,3,4,'12-11-1993','11-12-2016');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (4,4,5,'14-03-2004','03-05-2006');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (5,5,8,'18-06-2014','09-08-2017');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (6,6,7,'19-03-2018','15-03-2017');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (7,7,4,'07-04-2017','');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (8,8,2,'09-11-2018','');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (9,8,1,'28-02-2019','02-03-2019');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (10,9,4,'19-12-2009','24-12-2009');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (11,9,5,'18-06-2013','25-09-2018');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (12,11,6,'18-06-2014','');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (13,12,7,'23-01-1999','14-04-2004');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (14,1,1,'19-07-2017','');
+INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (15,16,5,'13-02-2018','');
 ```
 
 ## Задания на изменение/удаление/добавление
@@ -290,7 +290,7 @@ INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUE
 4. Уменьшите риск хобби, которым занимается наибольшее количество человек
 5. Добавьте всем студентам, которые занимаются хотя бы одним хобби 0.01 балл
 6. Удалите все завершенные хобби студентов
-7. Добавьте студенту с n_z 4 хобби с id 5. date_start - '15-11-2009, date_finish - null
+7. Добавьте студенту с id 4 хобби с id 5. date_start - '15-11-2009, date_finish - null
 8. Напишите запрос, который удаляет самую раннюю из студентов_хобби запись, в случае, если студент делал перерыв в хобби (т.е. занимался одним и тем же несколько раз)
 9. Поменяйте название хобби всем студентам, кто занимается футболом - на бальные танцы, а кто баскетболом - на вышивание крестиком.
 10. Добавьте в таблицу хобби новое хобби с названием "Учёба"
@@ -308,8 +308,8 @@ INSERT INTO STUDENTS_HOBBIES$ (id, n_z, hobby_id, date_start, date_finish) VALUE
 
 ```sql
 ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK
-FOREIGN KEY (N_Z)
-REFERENCES STUDENTS$ (N_Z)
+FOREIGN KEY (ID)
+REFERENCES STUDENTS$ (ID)
 
 /
 ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK1

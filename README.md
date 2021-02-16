@@ -35,7 +35,4 @@
 
 ## Контакты
 
-Вы можете задавать вопросы в любое время:
-
-- [telegram](https://t.me/ryabov_nv) - лучше пишите сюда
-- mail: ryabov_nv95@mail.ru
+Для вопросов: ryabov@uni-dubna.ru

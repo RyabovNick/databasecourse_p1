@@ -28,7 +28,7 @@ EXPLAIN PLAN FOR
 
 ```sql
 select name from students
-where n_z = 2
+where id = 2
 ```
 
 и зайдём во вкладку Explain
@@ -37,7 +37,7 @@ where n_z = 2
 | ---------------- | -------------- | ----------- | ---- | ---- | ---- | ----- | ---------------- | ---------------- |
 | SELECT STATEMENT |                |             | 1    | 1    | 1    | 8     |                  |                  |
 | TABLE ACCESS     | BY INDEX ROWID | STUDENTS    | 1    | 1    | 1    | 8     |                  |                  |
-| INDEX            | UNIQUE SCAN    | STUDENTS_PK | 1    | 1    | 0    |       |                  | "N_Z" = 2        |
+| INDEX            | UNIQUE SCAN    | STUDENTS_PK | 1    | 1    | 0    |       |                  | "ID" = 2         |
 
 Можно увидеть, что поиск записи осуществляется при помощи индекса и стоимость всего запроса равна 1.
 
@@ -46,7 +46,7 @@ where n_z = 2
 | Operation        | Options      | Object   | Rows | Time | Cost | Bytes | FilterPredicates | AccessPredicates |
 | ---------------- | ------------ | -------- | ---- | ---- | ---- | ----- | ---------------- | ---------------- |
 | SELECT STATEMENT |              |          | 1    | 1    | 3    | 8     |                  |                  |
-| TABLE ACCESS     | STORAGE FULL | STUDENTS | 1    | 1    | 3    | 8     | "N_Z" = 2        | "N_Z" = 2        |
+| TABLE ACCESS     | STORAGE FULL | STUDENTS | 1    | 1    | 3    | 8     | "ID" = 2         | "ID" = 2         |
 
 Стала понятно разница? Из-за того, что индексов нет приходится делать полный перебор, что, очевидно, гораздо дороже. Можете включить индексы (или сделать rebuild, чтоб включить его)
 
@@ -131,7 +131,7 @@ Table access by rowid - в строке rowid указывается файл д
 ```sql
 Select s.name, s.n_group
 from students$ s, students_hobbies$ sh
-where s.n_z = 3 and s.n_z = sh.n_z
+where s.id = 3 and s.id = sh.id
 ```
 
 | Operation        | Options        | Object             | Rows | Time | Cost | Bytes | FilterPredicates \* | AccessPredicates |
@@ -139,8 +139,8 @@ where s.n_z = 3 and s.n_z = sh.n_z
 | SELECT STATEMENT |                |                    | 1    | 1    | 4    | 24    |                     |                  |
 | NESTED LOOPS     |                |                    | 1    | 1    | 4    | 24    |                     |                  |
 | TABLE ACCESS     | BY INDEX ROWID | STUDENTS\$         | 1    | 1    | 1    | 21    |                     |                  |
-| INDEX            | UNIQUE SCAN    | STUDENTS\$\_PK     | 1    | 1    | 0    |       |                     | "S"."N_Z" = 3    |
-| TABLE ACCESS     | STORAGE FULL   | STUDENTS_HOBBIES\$ | 1    | 1    | 3    | 3     | "SH"."N_Z" = 3      | "SH"."N_Z" = 3   |
+| INDEX            | UNIQUE SCAN    | STUDENTS\$\_PK     | 1    | 1    | 0    |       |                     | "S"."ID" = 3     |
+| TABLE ACCESS     | STORAGE FULL   | STUDENTS_HOBBIES\$ | 1    | 1    | 3    | 3     | "SH"."ID" = 3       | "SH"."ID" = 3    |
 
 ### Index range scan
 
@@ -149,35 +149,35 @@ where s.n_z = 3 and s.n_z = sh.n_z
 ```sql
 Select s.name, s.n_group
 from students$ s, students_hobbies$ sh
-where s.n_z < 3 and s.n_z = sh.n_z
+where s.id < 3 and s.id = sh.id
 ```
 
-| Operation        | Options        | Object             | Rows | Time | Cost | Bytes | FilterPredicates \* | AccessPredicates       |
-| ---------------- | -------------- | ------------------ | ---- | ---- | ---- | ----- | ------------------- | ---------------------- |
-| SELECT STATEMENT |                |                    | 2    | 1    | 5    | 48    |                     |                        |
-| HASH JOIN        |                |                    | 2    | 1    | 5    | 48    |                     | "S"."N_Z" = "SH"."N_Z" |
-| TABLE ACCESS     | BY INDEX ROWID | STUDENTS\$         | 2    | 1    | 2    | 42    |                     |                        |
-| INDEX            | RANGE SCAN     | STUDENTS\$\_PK     | 2    | 1    | 1    |       |                     | "S"."N_Z"<3            |
-| TABLE ACCESS     | STORAGE FULL   | STUDENTS_HOBBIES\$ | 3    | 1    | 3    | 9     | "SH"."N_Z"<3        | "SH"."N_Z"<3           |
+| Operation        | Options        | Object             | Rows | Time | Cost | Bytes | FilterPredicates \* | AccessPredicates     |
+| ---------------- | -------------- | ------------------ | ---- | ---- | ---- | ----- | ------------------- | -------------------- |
+| SELECT STATEMENT |                |                    | 2    | 1    | 5    | 48    |                     |                      |
+| HASH JOIN        |                |                    | 2    | 1    | 5    | 48    |                     | "S"."ID" = "SH"."ID" |
+| TABLE ACCESS     | BY INDEX ROWID | STUDENTS\$         | 2    | 1    | 2    | 42    |                     |                      |
+| INDEX            | RANGE SCAN     | STUDENTS\$\_PK     | 2    | 1    | 1    |       |                     | "S"."ID"<3           |
+| TABLE ACCESS     | STORAGE FULL   | STUDENTS_HOBBIES\$ | 3    | 1    | 3    | 9     | "SH"."ID"<3         | "SH"."ID"<3          |
 
 ### Index range scan descending
 
 Концептуально тоже самое, что и сканирование диапазона индекса, но он используется, когда индексом может быть удовлетворено предложение ORDER BY .. DESCENDING.
 
 ```sql
-Select s.n_z, s.name, s.n_group
+Select s.id, s.name, s.n_group
 from students$ s, students_hobbies$ sh
-where s.n_z < 3 and s.n_z = sh.n_z
-order by s.n_z desc
+where s.id < 3 and s.id = sh.id
+order by s.id desc
 ```
 
-| Operation        | Options               | Object             | Rows | Time | Cost | Bytes | FilterPredicates \*                     | AccessPredicates                        |
-| ---------------- | --------------------- | ------------------ | ---- | ---- | ---- | ----- | --------------------------------------- | --------------------------------------- |
-| SELECT STATEMENT |                       |                    | 2    | 1    | 6    | 48    |                                         |                                         |
-| NESTED LOOPS     |                       |                    | 2    | 1    | 6    | 48    |                                         |                                         |
-| TABLE ACCESS     | BY INDEX ROWID        | STUDENTS\$         | 2    | 1    | 2    | 42    |                                         |                                         |
-| INDEX            | RANGE SCAN DESCENDING | STUDENTS\$\_PK     | 2    | 1    | 1    |       |                                         | "S"."N_Z"<3                             |
-| TABLE ACCESS     | STORAGE FULL          | STUDENTS_HOBBIES\$ | 1    | 1    | 2    | 3     | "SH"."N_Z"<3 AND "S"."N_Z" = "SH"."N_Z" | "SH"."N_Z"<3 AND "S"."N_Z" = "SH"."N_Z" |
+| Operation        | Options               | Object             | Rows | Time | Cost | Bytes | FilterPredicates \*                  | AccessPredicates                     |
+| ---------------- | --------------------- | ------------------ | ---- | ---- | ---- | ----- | ------------------------------------ | ------------------------------------ |
+| SELECT STATEMENT |                       |                    | 2    | 1    | 6    | 48    |                                      |                                      |
+| NESTED LOOPS     |                       |                    | 2    | 1    | 6    | 48    |                                      |                                      |
+| TABLE ACCESS     | BY INDEX ROWID        | STUDENTS\$         | 2    | 1    | 2    | 42    |                                      |                                      |
+| INDEX            | RANGE SCAN DESCENDING | STUDENTS\$\_PK     | 2    | 1    | 1    |       |                                      | "S"."ID"<3                           |
+| TABLE ACCESS     | STORAGE FULL          | STUDENTS_HOBBIES\$ | 1    | 1    | 2    | 3     | "SH"."ID"<3 AND "S"."ID" = "SH"."ID" | "SH"."ID"<3 AND "S"."ID" = "SH"."ID" |
 
 ### Index skip scan
 
@@ -197,17 +197,17 @@ order by s.n_z desc
 ```sql
 Select s.name, s.n_group
 from students$ s, students_hobbies$ sh
-where s.n_group = 4032 and s.n_z = sh.n_z
+where s.n_group = 4032 and s.id = sh.id
 ```
 
-| Operation        | Options        | Object             | Rows | Time | Cost | Bytes | FilterPredicates \*    | AccessPredicates       |
-| ---------------- | -------------- | ------------------ | ---- | ---- | ---- | ----- | ---------------------- | ---------------------- |
-| SELECT STATEMENT |                |                    | 6    | 1    | 6    | 144   |                        |                        |
-| MERGE JOIN       |                |                    | 6    | 1    | 6    | 144   |                        |                        |
-| TABLE ACCESS     | BY INDEX ROWID | STUDENTS\$         | 5    | 1    | 2    | 105   | "S"."N_GROUP" = 4032   |                        |
-| INDEX            | FULL SCAN      | STUDENTS\$\_PK     | 19   | 1    | 1    |       |                        |                        |
-| SORT             | JOIN           |                    | 14   | 1    | 4    | 42    | "S"."N_Z" = "SH"."N_Z" | "S"."N_Z" = "SH"."N_Z" |
-| TABLE ACCESS     | STORAGE FULL   | STUDENTS_HOBBIES\$ | 14   | 1    | 3    | 42    |                        |                        |
+| Operation        | Options        | Object             | Rows | Time | Cost | Bytes | FilterPredicates \*  | AccessPredicates     |
+| ---------------- | -------------- | ------------------ | ---- | ---- | ---- | ----- | -------------------- | -------------------- |
+| SELECT STATEMENT |                |                    | 6    | 1    | 6    | 144   |                      |                      |
+| MERGE JOIN       |                |                    | 6    | 1    | 6    | 144   |                      |                      |
+| TABLE ACCESS     | BY INDEX ROWID | STUDENTS\$         | 5    | 1    | 2    | 105   | "S"."N_GROUP" = 4032 |                      |
+| INDEX            | FULL SCAN      | STUDENTS\$\_PK     | 19   | 1    | 1    |       |                      |                      |
+| SORT             | JOIN           |                    | 14   | 1    | 4    | 42    | "S"."ID" = "SH"."ID" | "S"."ID" = "SH"."ID" |
+| TABLE ACCESS     | STORAGE FULL   | STUDENTS_HOBBIES\$ | 14   | 1    | 3    | 42    |                      |                      |
 
 ### Fast full index scan
 
@@ -232,35 +232,35 @@ Bitmap индекс использует набор битов для каждо
 ```sql
 Select s.name, s.n_group
 from students$ s, students_hobbies$ sh
-where s.n_z < 3 and s.n_z = sh.n_z
+where s.id < 3 and s.id = sh.id
 ```
 
-| Operation        | Options        | Object             | Rows | Time | Cost | Bytes | FilterPredicates \* | AccessPredicates       |
-| ---------------- | -------------- | ------------------ | ---- | ---- | ---- | ----- | ------------------- | ---------------------- |
-| SELECT STATEMENT |                |                    | 2    | 1    | 5    | 48    |                     |                        |
-| HASH JOIN        |                |                    | 2    | 1    | 5    | 48    |                     | "S"."N_Z" = "SH"."N_Z" |
-| TABLE ACCESS     | BY INDEX ROWID | STUDENTS\$         | 2    | 1    | 2    | 42    |                     |                        |
-| INDEX            | RANGE SCAN     | STUDENTS\$\_PK     | 2    | 1    | 1    |       |                     | "S"."N_Z"<3            |
-| TABLE ACCESS     | STORAGE FULL   | STUDENTS_HOBBIES\$ | 3    | 1    | 3    | 9     | "SH"."N_Z"<3        | "SH"."N_Z"<3           |
+| Operation        | Options        | Object             | Rows | Time | Cost | Bytes | FilterPredicates \* | AccessPredicates     |
+| ---------------- | -------------- | ------------------ | ---- | ---- | ---- | ----- | ------------------- | -------------------- |
+| SELECT STATEMENT |                |                    | 2    | 1    | 5    | 48    |                     |                      |
+| HASH JOIN        |                |                    | 2    | 1    | 5    | 48    |                     | "S"."ID" = "SH"."ID" |
+| TABLE ACCESS     | BY INDEX ROWID | STUDENTS\$         | 2    | 1    | 2    | 42    |                     |                      |
+| INDEX            | RANGE SCAN     | STUDENTS\$\_PK     | 2    | 1    | 1    |       |                     | "S"."ID"<3           |
+| TABLE ACCESS     | STORAGE FULL   | STUDENTS_HOBBIES\$ | 3    | 1    | 3    | 9     | "SH"."ID"<3         | "SH"."ID"<3          |
 
 ### Nested loops joins
 
 Соединения с вложенными циклами полезны, когда объединяются небольшие подмножества данных и если существует эффективный способ доступа ко второй таблице (например, поиск по индексу). Для каждой строки в первой таблице (внешней таблице) Oracle обращается ко всем строкам во второй таблице (внутренней таблице). Рассмотрим это как два встроенных цикла FOR. В Oracle Database 11g внутренняя реализация для соединений с вложенными циклами была изменена, чтобы уменьшить общую задержку для физического ввода-вывода, поэтому возможно, что вы увидите два соединения NESTED LOOPS в столбце операций плана, где ранее вы видели только одно в более ранних версиях Oracle.
 
 ```sql
-Select s.n_z, s.name, s.n_group
+Select s.id, s.name, s.n_group
 from students$ s, students_hobbies$ sh
-where s.n_z < 3 and s.n_z = sh.n_z
-order by s.n_z desc
+where s.id < 3 and s.id = sh.id
+order by s.id desc
 ```
 
-| Operation        | Options               | Object             | Rows | Time | Cost | Bytes | FilterPredicates \*                     | AccessPredicates                        |
-| ---------------- | --------------------- | ------------------ | ---- | ---- | ---- | ----- | --------------------------------------- | --------------------------------------- |
-| SELECT STATEMENT |                       |                    | 2    | 1    | 6    | 48    |                                         |                                         |
-| NESTED LOOPS     |                       |                    | 2    | 1    | 6    | 48    |                                         |                                         |
-| TABLE ACCESS     | BY INDEX ROWID        | STUDENTS\$         | 2    | 1    | 2    | 42    |                                         |                                         |
-| INDEX            | RANGE SCAN DESCENDING | STUDENTS\$\_PK     | 2    | 1    | 1    |       |                                         | "S"."N_Z"<3                             |
-| TABLE ACCESS     | STORAGE FULL          | STUDENTS_HOBBIES\$ | 1    | 1    | 2    | 3     | "SH"."N_Z"<3 AND "S"."N_Z" = "SH"."N_Z" | "SH"."N_Z"<3 AND "S"."N_Z" = "SH"."N_Z" |
+| Operation        | Options               | Object             | Rows | Time | Cost | Bytes | FilterPredicates \*                  | AccessPredicates                     |
+| ---------------- | --------------------- | ------------------ | ---- | ---- | ---- | ----- | ------------------------------------ | ------------------------------------ |
+| SELECT STATEMENT |                       |                    | 2    | 1    | 6    | 48    |                                      |                                      |
+| NESTED LOOPS     |                       |                    | 2    | 1    | 6    | 48    |                                      |                                      |
+| TABLE ACCESS     | BY INDEX ROWID        | STUDENTS\$         | 2    | 1    | 2    | 42    |                                      |                                      |
+| INDEX            | RANGE SCAN DESCENDING | STUDENTS\$\_PK     | 2    | 1    | 1    |       |                                      | "S"."ID"<3                           |
+| TABLE ACCESS     | STORAGE FULL          | STUDENTS_HOBBIES\$ | 1    | 1    | 2    | 3     | "SH"."ID"<3 AND "S"."ID" = "SH"."ID" | "SH"."ID"<3 AND "S"."ID" = "SH"."ID" |
 
 ### Sort merge joins
 
@@ -274,24 +274,24 @@ order by s.n_z desc
 ```sql
 Select s.name, s.n_group
 from students$ s, students_hobbies$ sh
-where s.n_group = 4032 and s.n_z = sh.n_z
+where s.n_group = 4032 and s.id = sh.id
 ```
 
-| Operation        | Options        | Object             | Rows | Time | Cost | Bytes | FilterPredicates \*    | AccessPredicates       |
-| ---------------- | -------------- | ------------------ | ---- | ---- | ---- | ----- | ---------------------- | ---------------------- |
-| SELECT STATEMENT |                |                    | 6    | 1    | 6    | 144   |                        |                        |
-| MERGE JOIN       |                |                    | 6    | 1    | 6    | 144   |                        |                        |
-| TABLE ACCESS     | BY INDEX ROWID | STUDENTS\$         | 5    | 1    | 2    | 105   | "S"."N_GROUP" = 4032   |                        |
-| INDEX            | FULL SCAN      | STUDENTS\$\_PK     | 19   | 1    | 1    |       |                        |                        |
-| SORT             | JOIN           |                    | 14   | 1    | 4    | 42    | "S"."N_Z" = "SH"."N_Z" | "S"."N_Z" = "SH"."N_Z" |
-| TABLE ACCESS     | STORAGE FULL   | STUDENTS_HOBBIES\$ | 14   | 1    | 3    | 42    |                        |                        |
+| Operation        | Options        | Object             | Rows | Time | Cost | Bytes | FilterPredicates \*  | AccessPredicates     |
+| ---------------- | -------------- | ------------------ | ---- | ---- | ---- | ----- | -------------------- | -------------------- |
+| SELECT STATEMENT |                |                    | 6    | 1    | 6    | 144   |                      |                      |
+| MERGE JOIN       |                |                    | 6    | 1    | 6    | 144   |                      |                      |
+| TABLE ACCESS     | BY INDEX ROWID | STUDENTS\$         | 5    | 1    | 2    | 105   | "S"."N_GROUP" = 4032 |                      |
+| INDEX            | FULL SCAN      | STUDENTS\$\_PK     | 19   | 1    | 1    |       |                      |                      |
+| SORT             | JOIN           |                    | 14   | 1    | 4    | 42    | "S"."ID" = "SH"."ID" | "S"."ID" = "SH"."ID" |
+| TABLE ACCESS     | STORAGE FULL   | STUDENTS_HOBBIES\$ | 14   | 1    | 3    | 42    |                      |                      |
 
 ### Cartesian join
 
 Оптимизатор объединяет каждую строку из одного источника данных с каждой строкой из другого источника данных, создавая декартово произведение двух наборов. Как правило, это выбирается только в том случае, если участвующие таблицы являются маленькими или если одна или несколько таблиц не имеют условий соединения с какой-либо другой таблицей в операторе. Декартовы объединения не распространены, поэтому они могут быть признаком проблемы с оценками мощности, если они выбраны по любой другой причине. Строго говоря, декартово произведение не является объединением.
 
 ```sql
-Select s.n_z, s.name, s.n_group
+Select s.id, s.name, s.n_group
 from students$ s, students_hobbies$ sh
 ```
 
@@ -318,10 +318,10 @@ Inner, outer, left, right - можно почитать в другом разд
 | \_\_\_NESTED LOOPS             |                |                    | 2    | 1    | 7    | 92    |                     |                            |
 | \_\_\_\_NESTED LOOPS           |                |                    | 2    | 1    | 7    | 92    |                     |                            |
 | \_\_\_\_\_STATISTICS COLLECTOR |                |                    |      |      |      |       |                     |                            |
-| \_\_\_\_\_\_HASH JOIN          |                |                    | 2    | 1    | 5    | 54    |                     | "S"."N_Z" = "SH"."N_Z"     |
+| \_\_\_\_\_\_HASH JOIN          |                |                    | 2    | 1    | 5    | 54    |                     | "S"."ID" = "SH"."ID"       |
 | \_\_\_\_\_\_\_TABLE ACCESS     | BY INDEX ROWID | STUDENTS\$         | 2    | 1    | 2    | 42    |                     |                            |
-| \_\_\_\_\_\_\_\_INDEX          | RANGE SCAN     | STUDENTS\$\_PK     | 2    | 1    | 1    |       |                     | "S"."N_Z"<3                |
-| \_\_\_\_\_\_\_TABLE ACCESS     | STORAGE FULL   | STUDENTS_HOBBIES\$ | 3    | 1    | 3    | 18    | "SH"."N_Z"<3        | "SH"."N_Z"<3               |
+| \_\_\_\_\_\_\_\_INDEX          | RANGE SCAN     | STUDENTS\$\_PK     | 2    | 1    | 1    |       |                     | "S"."ID"<3                 |
+| \_\_\_\_\_\_\_TABLE ACCESS     | STORAGE FULL   | STUDENTS_HOBBIES\$ | 3    | 1    | 3    | 18    | "SH"."ID"<3         | "SH"."ID"<3                |
 | \_\_\_\_\_INDEX                | UNIQUE SCAN    | HOBBIES\$\_PK      | 1    | 1    | 0    |       |                     | "SH"."HOBBY_ID" = "H"."ID" |
 | \_\_\_\_TABLE ACCESS           | BY INDEX ROWID | HOBBIES\$          | 1    | 1    | 1    | 19    |                     |                            |
 | \_\_\_TABLE ACCESS             | STORAGE FULL   | HOBBIES\$          | 1    | 1    | 1    | 19    |                     |                            |
