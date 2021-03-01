@@ -20,7 +20,7 @@
 
    ```sql
    SELECT s.*
-   FROM student s, students_hobbies sh
+   FROM student s, student_hobby sh
    WHERE s.id = sh.id
    ```
 
@@ -28,7 +28,7 @@
 
    ```sql
    SELECT s.*
-   FROM student s, students_hobbies sh
+   FROM student s, student_hobby sh
    WHERE s.id = sh.id AND date_finish IS NOT NULL
    ```
 
@@ -38,11 +38,11 @@
 
    ```sql
    SELECT s.*
-   FROM student s, students_hobbies sh
+   FROM student s, student_hobby sh
    WHERE s.id = sh.id AND sh.date_finish IS NOT NULL
    ```
 
-   Всё ок. Сразу понятно, что date_finish из таблицы students_hobbies
+   Всё ок. Сразу понятно, что date_finish из таблицы student_hobby
 
    Приучите себя всегда писать из какой таблицы вы берёте значения. И начинайте сразу, даже если используете 1 таблицу.
 
@@ -146,7 +146,7 @@
 
    - Названия таблиц в множественном числе, если состоит из нескольких слов, то последнее должно быть в множественном числе. STUDENTS, HOBBIES, STUDENTS_HOBBIES
 
-   - Псевдонимы (aliasing - as) - совет ORACLE сокращать до 4 символов. Максимальное количество символов в названии - 30. Чтобы не вводить каждый раз название таблицы полное - используются псевдонимы (для атрибутов это тоже возможно!). Запомните это, но в курсе использовать не обязательно. У нас не так много таблиц. Поэтому можно писать запрос так: `FROM student s, hobby h, students_hobbies sh`. По правилам Oracle нам необходимо сделать так: `FROM student stud, hobby hobb, students_hobbies stho`
+   - Псевдонимы (aliasing - as) - совет ORACLE сокращать до 4 символов. Максимальное количество символов в названии - 30. Чтобы не вводить каждый раз название таблицы полное - используются псевдонимы (для атрибутов это тоже возможно!). Запомните это, но в курсе использовать не обязательно. У нас не так много таблиц. Поэтому можно писать запрос так: `FROM student s, hobby h, student_hobby sh`. По правилам Oracle нам необходимо сделать так: `FROM student stud, hobby hobb, student_hobby stho`
 
    - атрибуты не должны начинаться с псевдонима или вообще с названия таблицы (однако есть ситуации, когда это полезнее, но точно не в нашем случае)
 

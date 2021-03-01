@@ -28,7 +28,7 @@ CREATE [OR REPLACE] VIEW имя_представления AS
 
 ```sql
 CREATE OR REPLACE VIEW Students_V1 AS
-SELECT id, Surname, Name, N_group, DATE_BIRTH FROM Students;
+SELECT id, surname, name, N_group, date_birth FROM Students;
 ```
 
 Удаление представлений, как и всех других объектов базы данных, осуществляется при помощи оператора DROP по имени представления, например:
@@ -46,7 +46,7 @@ DROP VIEW Students_V1;
 -- за исключением номера телефона(его мы изначально не включили в представление) и даты рождения, отсортированной по номеру группы.
 
 ```sql
-SELECT id, Surname, Name, N_group FROM Students_V1
+SELECT id, surname, name, N_group FROM Students_V1
 ORDER BY N_group;
 ```
 
@@ -75,6 +75,6 @@ ORDER BY N_group;
 
 ```sql
 CREATE OR REPLACE VIEW V2 AS
-SELECT id, Surname, Name, N_group FROM Students_V1
+SELECT id, surname, name, N_group FROM Students_V1
 WITH CHECK OPTION;
 ```

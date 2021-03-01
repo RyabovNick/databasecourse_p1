@@ -30,7 +30,7 @@ SELECT *
 FROM student
 WHERE id IN
     (SELECT id
-     FROM students_hobbies
+     FROM student_hobby
      WHERE date_finish IS NULL)
 ```
 

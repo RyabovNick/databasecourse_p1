@@ -225,7 +225,7 @@ CREATE table "STUDENTS" (
     "N_GROUP"    NUMBER(4,0) NOT NULL,
     "SCORE"      NUMBER(3,2) NOT NULL,
     "ADDRESS"    VARCHAR(1000),
-    "DATE_BIRTH" DATE,
+    "date_birth" DATE,
     constraint  "STUDENTS_PK" primary key ("id")
 )
 /
@@ -271,7 +271,7 @@ CREATE table STUDENTS (
     N_GROUP    NUMBER(4,0) NOT NULL,
     SCORE      NUMBER(3,2) NOT NULL,
     ADDRESS    VARCHAR(1000),
-    DATE_BIRTH DATE,
+    date_birth DATE,
     constraint  STUDENTS_PK primary key (id)
 )
 /
@@ -334,7 +334,7 @@ CREATE table STUDENTS_HOBBIES (
     id          NUMBER(5,0) NOT NULL,
     id         NUMBER(5,0) NOT NULL,
     hobby_id    NUMBER(5,0) NOT NULL,
-    DATE_START  DATE NOT NULL,
+    date_start  DATE NOT NULL,
     DATE_FINISH DATE,
     constraint  STUDENTS_HOBBIES_PK primary key (id)
 )

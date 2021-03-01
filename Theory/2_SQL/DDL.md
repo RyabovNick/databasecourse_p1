@@ -156,7 +156,7 @@ CREATE TABLE STUDENTS (
 	SURNAME VARCHAR(150),
 	N_GROUP NUMBER(4,0),
 	ADDRESS VARCHAR(200),
-	DATE_BIRTH DATE,
+	date_birth DATE,
 	AVERAGE_SCORE NUMBER(3,2),
 	CONSTRAINT STUDENTS_PK PRIMARY KEY (IDACH)
   USING INDEX  ENABLE
@@ -191,10 +191,10 @@ CREATE TABLE Students_Copy AS SELECT * FROM STUDENTS;
 ALTER TABLE имя_таблиц_ ADD поле тип [ограничения];
 ```
 
-Например, для добавления к таблице Students поля N_gr можно выполнить следующую команду:
+Например, для добавления к таблице Students поля n_group можно выполнить следующую команду:
 
 ```sql
-ALTER TABLE student ADD N_gr NUMBER(4);
+ALTER TABLE student ADD n_group NUMBER(4);
 ```
 
 ### Удаление атрибута таблицы
@@ -256,7 +256,7 @@ ALTER TABLE имя_таблицы ADD CONSTRAINT имя_ограничения C
 При наличии домена в таблице, каждый раз при изменении или добавлении значений в атрибуты, затрагиваемые условным выражением, СУБД будет проверять новое значение атрибутов на удовлетворение указанному выражению. Новое значение будет присвоено атрибуту только в том случае, если значение удовлетворяет указанному условию. При составлении условных выражений можно использовать логические операции >, <, >=, <=, <>, =, функции IN (проверка вхождения в множество), BETWEEN (проверка вхождения в диапазон), LIKE (проверка на удовлетворению шаблону). Кроме того, несколько условных выражений можно комбинировать при помощи логических операторов AND, OR и NOT.
 
 ```sql
-ALTER TABLE Students ADD CONSTRAINT Students_Ngr_check CHECK(N_gr >= 0);
+ALTER TABLE Students ADD CONSTRAINT Students_Ngr_check CHECK(n_group >= 0);
 ```
 
 ### Создание внешнего ключа
