@@ -27,7 +27,7 @@ https://docs.oracle.com/cd/E11882_01/server.112/e41573/optimops.htm#PFGRF94582
 
 ```sql
 SELECT *
-FROM students
+FROM student
 WHERE id IN
     (SELECT id
      FROM students_hobbies
@@ -39,9 +39,9 @@ WHERE id IN
 **Используйте в подобных запросах сразу синтаксис с соединением таблиц!**
 
 ```sql
-SELECT students.*
-FROM students, stud_hobby
-WHERE students.id = stud_hobby.id and stud_hobby.date_finish is null
+SELECT student.*
+FROM student, stud_hobby
+WHERE student.id = stud_hobby.id and stud_hobby.date_finish is null
 ```
 
 Именно в такой вид будет преобразован запрос выше. Но используйте сразу его. Обязательно!

@@ -120,7 +120,7 @@ MySQL Workbench [Скачать](https://dev.mysql.com/downloads/workbench/). П
 В MySQL возможен следующий синтаксис добавления:
 
 ```sql
-INSERT INTO `students` (`name`, `surname`, `date_birth`, `n_group`, `score`, `city`, `address`)
+INSERT INTO `student` (`name`, `surname`, `date_birth`, `n_group`, `score`, `city`, `address`)
 VALUES ('Николай','Николаев','1999-01-01',1012,4.78,'Москва','ул. Пушкина'),
        ('Алла','Дмитриева','1998-11-29',2011,3.83,'Дубна','ул. Николаева'),
        ('Пётр','Петров','1999-12-23',4011,4.54,'Казань','ул. Чапаева, д. 12, кв. 14'),

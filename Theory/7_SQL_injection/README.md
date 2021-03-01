@@ -13,7 +13,7 @@ SQL инъекция – один из самый распространённы
 
 ```sql
 SELECT *
-FROM students
+FROM student
 WHERE id = :value;
 ```
 
@@ -23,7 +23,7 @@ WHERE id = :value;
 
 ```sql
 SELECT *
-FROM students
+FROM student
 WHERE id = 1
   OR 1 = 1;
 ```
@@ -37,7 +37,7 @@ SELECT id,
        name,
        surname,
        n_group
-FROM students
+FROM student
 WHERE id = :__value;
 ```
 
@@ -62,7 +62,7 @@ SELECT id,
        name,
        surname,
        n_group
-FROM students
+FROM student
 WHERE id = -1
 UNION
 SELECT 1,
@@ -83,7 +83,7 @@ SELECT id,
        name,
        surname,
        n_group
-FROM students
+FROM student
 WHERE id = :value
   AND name LIKE '%';
 ```
@@ -97,7 +97,7 @@ SELECT id,
        name,
        surname,
        n_group
-FROM students where id = :value;
+FROM student where id = :value;
 ```
 
 добавляется такая часть
@@ -113,7 +113,7 @@ _1;_ _DROP_ _TABLE_ _students;_
 в Node.Js:
 
 ```js
-router.get('/students/city/:city', (req, res, next) => {
+router.get('/student/city/:city', (req, res, next) => {
 	//достать переменную :city из ссылки
 	var city = req.params['city']
 
@@ -123,15 +123,11 @@ router.get('/students/city/:city', (req, res, next) => {
 		// ? - экранирует код в '' кавычках
 		// ?? - экранирует код в `` кавычках
 		// это необходимо, чтобы не быть уязвимым к sql инъекциям
-		con.query(
-			'Select * from students where city = ?',
-			city,
-			(error, result) => {
-				if (error) throw error
+		con.query('Select * from student where city = ?', city, (error, result) => {
+			if (error) throw error
 
-				res.send(result)
-			}
-		)
+			res.send(result)
+		})
 	})
 })
 ```
@@ -140,7 +136,7 @@ router.get('/students/city/:city', (req, res, next) => {
 
 ```c#
 id = getRequestString("id");
-query = "SELECT * FROM students WHERE id = @0";
+query = "SELECT * FROM student WHERE id = @0";
 db.Execute(query, zach);
 @0 – параметр.
 ```

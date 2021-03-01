@@ -6,12 +6,12 @@ const genRegistrationProduct = require('./tables/registration_product')
 
 let insert = ''
 
-// генерируем supplier (функция возвращает min & max ID)
+// генерируем supplier (функция возвращает min & max id)
 let { data, minSupplierID, maxSupplierID } = genSupplier()
 insert += data
 
 // генерируем registration_product
-// (функция принимает min & max ID из supplier), чтобы сгенерировать supplier_id
+// (функция принимает min & max id из supplier), чтобы сгенерировать supplier_id
 data = genRegistrationProduct({ minSupplierID, maxSupplierID })
 insert += data
 

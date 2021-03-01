@@ -171,7 +171,7 @@ https://www.postgresql.org/docs/12/sql-insert.html
 Посмотрите на картинку ниже
 
 1. Названия атрибутов. **Будьте внимательны** - в качестве названия атрибута нельзя использовать зарезервированные слова в oracle в качестве названий. Например: group, order, select, from, where, count etc.
-2. Тип данных. Для цифр используется Number, для текста - VARCHAR2. Максимальный размер Number - 38 символов (указывается в precision обязательно). Максимальный размер VARCHAR2 - 4000, указывается в Scale обязательно. Если надо хранить гораздо больше символов, есть другие типы, например различные BLOB.
+2. Тип данных. Для цифр используется Number, для текста - VARCHAR. Максимальный размер Number - 38 символов (указывается в precision обязательно). Максимальный размер VARCHAR - 4000, указывается в Scale обязательно. Если надо хранить гораздо больше символов, есть другие типы, например различные BLOB.
 3. Для цифр - Precision - сколько всего символов. Не путайте, это не максимально число, а максимальное количество символов. В id у нас максимальное число это 99999. В scale указывается сколько из чисел, указанных в precision идут после запятой. Т.е. в атрибуте score максимальное число может быть 9,99. А не 999,99 - это неверно.
 4. Некоторые атрибуты будут не нулевые. Т.е. у студента должно быть имя обязательно, иначе добавить мы его не можем. Должна быть группа и средний балл. Остальные атрибуты могут и null равны (мы не выбрали id, но как мы сделаем его первичным ключом он станет не нулевым автоматически)
 5. Каждому атрибуту можно сделать значение по умолчанию. Т.е. если мы при заполнении его не указали, оно будет равно default значению.
@@ -219,14 +219,14 @@ https://www.postgresql.org/docs/12/sql-insert.html
 
 ```sql
 CREATE table "STUDENTS" (
-    "ID"        NUMBER(5,0),
-    "NAME"       VARCHAR2(255) NOT NULL,
-    "SURNAME"    VARCHAR2(255),
+    "id"        NUMBER(5,0),
+    "NAME"       VARCHAR(255) NOT NULL,
+    "SURNAME"    VARCHAR(255),
     "N_GROUP"    NUMBER(4,0) NOT NULL,
     "SCORE"      NUMBER(3,2) NOT NULL,
-    "ADDRESS"    VARCHAR2(1000),
+    "ADDRESS"    VARCHAR(1000),
     "DATE_BIRTH" DATE,
-    constraint  "STUDENTS_PK" primary key ("ID")
+    constraint  "STUDENTS_PK" primary key ("id")
 )
 /
 
@@ -237,8 +237,8 @@ CREATE trigger "BI_STUDENTS"
   before insert on "STUDENTS"
   for each row
 begin
-  if :NEW."ID" is null then
-    select "STUDENTS_SEQ".nextval into :NEW."ID" from sys.dual;
+  if :NEW."id" is null then
+    select "STUDENTS_SEQ".nextval into :NEW."id" from sys.dual;
   end if;
 end;
 /
@@ -265,14 +265,14 @@ check (SCORE >= 2 and SCORE <=5)
 
 ```sql
 CREATE table STUDENTS (
-    ID        NUMBER(5,0),
-    NAME       VARCHAR2(255) NOT NULL,
-    SURNAME    VARCHAR2(255),
+    id        NUMBER(5,0),
+    NAME       VARCHAR(255) NOT NULL,
+    SURNAME    VARCHAR(255),
     N_GROUP    NUMBER(4,0) NOT NULL,
     SCORE      NUMBER(3,2) NOT NULL,
-    ADDRESS    VARCHAR2(1000),
+    ADDRESS    VARCHAR(1000),
     DATE_BIRTH DATE,
-    constraint  STUDENTS_PK primary key (ID)
+    constraint  STUDENTS_PK primary key (id)
 )
 /
 
@@ -283,8 +283,8 @@ CREATE trigger BI_STUDENTS
   before insert on STUDENTS
   for each row
 begin
-  if :NEW.ID is null then
-    select STUDENTS_SEQ.nextval into :NEW.ID from sys.dual;
+  if :NEW.id is null then
+    select STUDENTS_SEQ.nextval into :NEW.id from sys.dual;
   end if;
 end;
 /
@@ -297,14 +297,14 @@ check (SCORE >= 2 and SCORE <=5)
 
 Поехали дальше. Нам надо создать таблицу с Хобби.
 
-Не буду подробно останавливаться в этот раз. Всё можно увидеть на нашей спроектированной диаграмме. Аналогично таблице students. Мы хотим сделать риск от 0 до 10 и 2 знака после запятой, в этом случае понадобится размер `Number(4,2)` и домен с ограничением от 0 до 10
+Не буду подробно останавливаться в этот раз. Всё можно увидеть на нашей спроектированной диаграмме. Аналогично таблице student. Мы хотим сделать риск от 0 до 10 и 2 знака после запятой, в этом случае понадобится размер `Number(4,2)` и домен с ограничением от 0 до 10
 
 ```sql
 CREATE table HOBBIES (
-    ID        NUMBER(5,0),
-    NAME       VARCHAR2(255) NOT NULL,
+    id        NUMBER(5,0),
+    NAME       VARCHAR(255) NOT NULL,
     RISK    NUMBER(4,2) NOT NULL,
-    constraint  HOBBIES_PK primary key (ID)
+    constraint  HOBBIES_PK primary key (id)
 )
 /
 
@@ -315,8 +315,8 @@ CREATE trigger BI_HOBBIES
   before insert on HOBBIES
   for each row
 begin
-  if :NEW.ID is null then
-    select HOBBIES_SEQ.nextval into :NEW.ID from sys.dual;
+  if :NEW.id is null then
+    select HOBBIES_SEQ.nextval into :NEW.id from sys.dual;
   end if;
 end;
 /
@@ -331,12 +331,12 @@ check (RISK >= 0 and RISK <= 10)
 
 ```sql
 CREATE table STUDENTS_HOBBIES (
-    ID          NUMBER(5,0) NOT NULL,
-    ID         NUMBER(5,0) NOT NULL,
-    HOBBY_ID    NUMBER(5,0) NOT NULL,
+    id          NUMBER(5,0) NOT NULL,
+    id         NUMBER(5,0) NOT NULL,
+    hobby_id    NUMBER(5,0) NOT NULL,
     DATE_START  DATE NOT NULL,
     DATE_FINISH DATE,
-    constraint  STUDENTS_HOBBIES_PK primary key (ID)
+    constraint  STUDENTS_HOBBIES_PK primary key (id)
 )
 /
 
@@ -347,20 +347,20 @@ CREATE trigger BI_STUDENTS_HOBBIES
   before insert on STUDENTS_HOBBIES
   for each row
 begin
-  if :NEW.ID is null then
-    select STUDENTS_HOBBIES_SEQ.nextval into :NEW.ID from sys.dual;
+  if :NEW.id is null then
+    select STUDENTS_HOBBIES_SEQ.nextval into :NEW.id from sys.dual;
   end if;
 end;
 /
 
 ALTER TABLE STUDENTS_HOBBIES ADD CONSTRAINT STUDENTS_HOBBIES_FK
-FOREIGN KEY (ID)
-REFERENCES STUDENTS (ID)
+FOREIGN KEY (id)
+REFERENCES STUDENTS (id)
 
 /
 ALTER TABLE STUDENTS_HOBBIES ADD CONSTRAINT STUDENTS_HOBBIES_FK1
-FOREIGN KEY (HOBBY_ID)
-REFERENCES HOBBIES (ID)
+FOREIGN KEY (hobby_id)
+REFERENCES HOBBIES (id)
 
 /
 ```
@@ -383,7 +383,7 @@ REFERENCES HOBBIES (ID)
 Пример
 
 ```sql
-Insert into students (name, surname, n_group, score, address, date_birth) values ('Ivan', 'Ivanov', 2253, 4.8, 'г. Дубна, пр-кт. Боголюбова, д.15, кв.31', '28/01/2000')
+Insert into student (name, surname, n_group, score, address, date_birth) values ('Ivan', 'Ivanov', 2253, 4.8, 'г. Дубна, пр-кт. Боголюбова, д.15, кв.31', '28/01/2000')
 ```
 
 добавит новую строку в таблицу студенты. Если вы хотите выполнить много insert, то либо воспользуйте [SQL Scripts](../README.md) пункт 17
@@ -392,9 +392,9 @@ Insert into students (name, surname, n_group, score, address, date_birth) values
 
 ```sql
 Insert ALL
-  INTO students () VALUES ()
-  INTO students () VALUES ()
-  INTO students () VALUES ()
+  INTO student () VALUES ()
+  INTO student () VALUES ()
+  INTO student () VALUES ()
 Select * FROM DUAL
 ```
 

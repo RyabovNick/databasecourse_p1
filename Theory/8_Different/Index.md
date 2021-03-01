@@ -23,7 +23,7 @@ ON table_name (column1, column2, ...);
 
 ```sql
 SELECT *
-FROM students
+FROM student
 WHERE id = 222;
 ```
 
@@ -73,7 +73,7 @@ WHERE id = 222;
 
 ```sql
 SELECT COUNT(*)
-FROM students
+FROM student
 WHERE gender = 'F'
   AND status IN ('учится',
                  'академ');
@@ -101,7 +101,7 @@ WHERE gender = 'F'
 
 ```sql
 SELECT substr(n_group,0,1)
-FROM students
+FROM student
 WHERE substr(n_group,0,1) = 1
 ```
 
@@ -109,7 +109,7 @@ WHERE substr(n_group,0,1) = 1
 
 ```sql
 CREATE INDEX course_idx
-ON students ( substr(n_group,0,1) );
+ON student ( substr(n_group,0,1) );
 ```
 
 ## Domain indexes

@@ -12,7 +12,7 @@
 
 `CAST (st.score AS varchar)`
 
-Также можно использовать подобную запись:
+Также можно использовать подобную запись, это более удобный вариант на данный момент:
 
 `атрибут::желаемый_тип`
 
@@ -280,7 +280,7 @@ SELECT to_char(sysdate,'fmMonth')||'is a special time' FROM dual;
 
 ```sql
 Select *
-from students
+from student
 where to_char(date_birth, 'RR') = 99
 ```
 

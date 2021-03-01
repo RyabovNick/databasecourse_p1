@@ -11,7 +11,7 @@ function genSupplier() {
 	let supplierInsert = `INSERT INTO supplier (name, city, street, house, phone, email)
 VALUES`
 
-	// генерируемые ID от 1 до 10
+	// генерируемые id от 1 до 10
 	// используем эти значения для дальнейшей генерации
 	// внешних ключей в таблицах, связанных с supplier
 	const minIDSupplier = 1
@@ -37,7 +37,7 @@ VALUES`
 	const data = supplierInsert + insertValues.join(',\n') + ';\n\n'
 
 	// функция возвращает сгенерированные данные (insert)
-	// минимальное значение ID и максимальное
+	// минимальное значение id и максимальное
 	return { data, minSupplierID: minIDSupplier, maxSupplierID: maxIDSupplier }
 }
 

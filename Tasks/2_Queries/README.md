@@ -2,16 +2,6 @@
 
 SQL - язык, в котором один и тот же запрос можно выполнить множеством способов. Поэтому довольно часто будет встречаться задание, когда надо выполнить один запрос несколькими способами.
 
-Можно писать запросы с входным параметром, который задаётся пользователем:
-
-```sql
-Select *
-from students
-where n_group = :n_group
-```
-
-Появится окно с возможностью ввода значения, которое будет использовано в запросе.
-
 ## Однотабличные запросы
 
 1. Вывести всеми возможными способами имена и фамилии студентов, средний балл которых от 4 до 4.5
@@ -108,174 +98,90 @@ where n_group = :n_group
 **Обратите внимание на дату!!!**
 
 ```sql
-/*
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-В приведённом скрипте формат даты - DD-MM-YYYY
-Если у вас стоит другой - будет ошибка.
-Для изменения даты зайдите в правый верхний угол - preferences.
-В DEFAULT DATE FORMATE введите DD-MM-YYYY
-Сохраните и перезайдите в apex.oracle
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-*/
-/*
-    Удаление таблиц, последовательностей, триггеров
-*/
-DROP TABLE STUDENTS_HOBBIES$;
-DROP SEQUENCE STUDENTS_HOBBIES$_SEQ;
-DROP TABLE STUDENTS$;
-DROP SEQUENCE STUDENTS$_SEQ;
-DROP TABLE HOBBIES$;
-DROP SEQUENCE HOBBIES$_SEQ;
-/
+BEGIN;
 
-/*
-    Создание ранее используемых таблиц с $ в конце
-*/
-CREATE table STUDENTS$ (
-    ID        NUMBER(5,0),
-    NAME       VARCHAR2(255) NOT NULL,
-    SURNAME    VARCHAR2(255),
-    N_GROUP    NUMBER(4,0) NOT NULL,
-    SCORE      NUMBER(3,2) NOT NULL,
-    ADDRESS    VARCHAR2(1000),
-    DATE_BIRTH DATE,
-    constraint  STUDENTS$_PK primary key (ID)
-)
-/
+DROP TABLE IF EXISTS student_hobby;
+DROP TABLE IF EXISTS student;
+DROP TABLE IF EXISTS hobby;
 
-CREATE sequence STUDENTS$_SEQ
-/
+CREATE TABLE student (
+    id         SERIAL PRIMARY KEY,
+    name       VARCHAR(255) NOT NULL,
+    surname    VARCHAR(255) NOT NULL,
+    n_group    INTEGER NOT NULL,
+    score      NUMERIC(3,2),
+    address    VARCHAR(3000),
+    date_birth DATE
+);
 
-CREATE trigger BI_STUDENTS$
-  before insert on STUDENTS$
-  for each row
-begin
-  if :NEW.ID is null then
-    select STUDENTS$_SEQ.nextval into :NEW.ID from sys.dual;
-  end if;
-end;
-/
+CREATE TABLE hobby (
+    id    SERIAL PRIMARY KEY,
+    name  VARCHAR(255) NOT NULL,
+    risk  NUMERIC(4,2) NOT NULL
+);
 
-alter table STUDENTS$ add
-constraint SCORE_CHECK
-check (SCORE >= 2 and SCORE <=5)
-/
-
-CREATE table HOBBIES$ (
-    ID        NUMBER(5,0),
-    NAME       VARCHAR2(255) NOT NULL,
-    RISK    NUMBER(4,2) NOT NULL,
-    constraint  HOBBIES$_PK primary key (ID)
-)
-/
-
-CREATE sequence HOBBIES$_SEQ
-/
-
-CREATE trigger BI_HOBBIES$
-  before insert on HOBBIES$
-  for each row
-begin
-  if :NEW.ID is null then
-    select HOBBIES$_SEQ.nextval into :NEW.ID from sys.dual;
-  end if;
-end;
-/
-
-alter table HOBBIES$ add
-constraint RISK_CHECK
-check (RISK >= 0 and RISK <= 10)
-/
-
-CREATE table STUDENTS_HOBBIES$ (
-    ID          NUMBER(5,0) NOT NULL,
-    ID         NUMBER(5,0) NOT NULL,
-    HOBBY_ID    NUMBER(5,0) NOT NULL,
-    DATE_START  DATE NOT NULL,
-    DATE_FINISH DATE,
-    constraint  STUDENTS_HOBBIES$_PK primary key (ID)
-)
-/
-
-CREATE sequence STUDENTS_HOBBIES$_SEQ
-/
-
-CREATE trigger BI_STUDENTS_HOBBIES$
-  before insert on STUDENTS_HOBBIES$
-  for each row
-begin
-  if :NEW.ID is null then
-    select STUDENTS_HOBBIES$_SEQ.nextval into :NEW.ID from sys.dual;
-  end if;
-end;
-/
-
-ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK
-FOREIGN KEY (ID)
-REFERENCES STUDENTS$ (ID)
-ON DELETE CASCADE;
-
-/
-ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK1
-FOREIGN KEY (HOBBY_ID)
-REFERENCES HOBBIES$ (ID)
-ON DELETE CASCADE;
-
-/
-
+CREATE TABLE student_hobby (
+    id          SERIAL PRIMARY KEY,
+    student_id  INTEGER NOT NULL REFERENCES student(id),
+    hobby_id    INTEGER NOT NULL REFERENCES hobby(id),
+    date_start  TIMESTAMP NOT NULL,
+    date_finish DATE
+);
 
 /*
     Добавление данных
 */
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (1,'Иван','Иванов',2222,'09-09-1999',4.02);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (2,'Михаил','Михайлов',4032,'03-12-1997',3.25);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (3,'Виктория','Николаева',4011,'23-11-1994',4.23);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (4,'Нуль','Нулёвый',2222,'04-05-1998',4.23);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (5,'Евгения','Сидорова',2222,'04-05-1996',3.59);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (6,'Сергей','Иванцов',3011,'24-12-1995',3.85);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (7,'Николай','Борисов',3011,'12-08-2000',4.22);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (8,'Виктория','Воронцов',3011,'11-11-1999',4.63);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (9,'Марина','Кузнецов',3011,'25-01-1998',3.11);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (10,'Джон','Уик',3011,'',3.45);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (11,'Виктор','Понедельник',3011,'23-11-1994',3.98);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (12,'Алиса','Васильченко',2222,'',2.98);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (13,'Артём','Иван',2222,'28-05-1999',4.03);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (14,'Шарлотта','Калла',2222,'25-05-1996',4.67);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (15,'Юлия','Белорукова',4011,'28-11-1997',3.58);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (16,'Татьяна','Акимова',4011,'23-01-1995',4.98);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (17,'Ульяна','Кайшева',4011,'03-03-1998',4.37);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (19,'Никита','Крюков',4011,'08-04-1999',2.55);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (20,'Иван','Шаповалов',4032,'29-04-2002',2);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (21,'Анастасия','Овсянникова',4032,'31-12-1998',4.25);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (22,'Людмила','Иванова',4032,'05-02-1993',3.65);
-INSERT INTO STUDENTS$ (id, name, surname, n_group, date_birth, score) VALUES (23,'Валентина','Сидорова',4032,'',3.76);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (1, 'Иван', 'Иванов', 2222, '09-09-1999', 4.02);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (2, 'Михаил', 'Михайлов', 4032, '03-12-1997', 3.25);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (3, 'Виктория', 'Николаева', 4011, '11-23-1994', 4.23);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (4, 'Нуль', 'Нулёвый', 2222, '04-05-1998', 4.23);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (5, 'Евгения', 'Сидорова', 2222, '04-05-1996', 3.59);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (6, 'Сергей', 'Иванцов', 3011, '12-24-1995', 3.85);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (7, 'Николай', 'Борисов', 3011, '12-08-2000', 4.22);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (8, 'Виктория', 'Воронцов', 3011, '11-11-1999', 4.63);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (9, 'Марина', 'Кузнецов', 3011, '01-25-1998', 3.11);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (10, 'Джон', 'Уик', 3011, null, 3.45);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (11, 'Виктор', 'Понедельник', 3011, '11-23-1994', 3.98);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (12, 'Алиса', 'Васильченко', 2222, null, 2.98);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (13, 'Артём', 'Иван', 2222, '05-28-1999', 4.03);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (14, 'Шарлотта', 'Калла', 2222, '05-23-1996', 4.67);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (15, 'Юлия', 'Белорукова', 4011, '11-28-1997', 3.58);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (16, 'Татьяна', 'Акимова', 4011, '01-23-1995', 4.98);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (17, 'Ульяна', 'Кайшева', 4011, '03-03-1998', 4.37);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (19, 'Никита', 'Крюков', 4011, '08-04-1999', 2.55);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (20, 'Иван', 'Шаповалов', 4032, '04-29-2002', 2);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (21, 'Анастасия', 'Овсянникова', 4032, '12-31-1998', 4.25);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (22, 'Людмила', 'Иванова', 4032, '05-02-1993', 3.65);
+INSERT INTO student (id, name, surname, n_group, date_birth, score) VALUES (23, 'Валентина', 'Сидорова', 4032, null, 3.76);
 
 
-INSERT INTO HOBBIES$ (id, risk, name) VALUES (2,0.3,'Теннис');
-INSERT INTO HOBBIES$ (id, risk, name) VALUES (5,0.4,'Лыжные');
-INSERT INTO HOBBIES$ (id, risk, name) VALUES (7,0.2,'Фехтование');
-INSERT INTO HOBBIES$ (id, risk, name) VALUES (1,0.8,'Футбол');
-INSERT INTO HOBBIES$ (id, risk, name) VALUES (3,0.5,'Баскетбол');
-INSERT INTO HOBBIES$ (id, risk, name) VALUES (4,0.4,'Биатлон');
-INSERT INTO HOBBIES$ (id, risk, name) VALUES (6,0.6,'Волейбол');
-INSERT INTO HOBBIES$ (id, risk, name) VALUES (8,0,'Музыка');
+INSERT INTO hobby (id, risk, name) VALUES (2, 0.3, 'Теннис');
+INSERT INTO hobby (id, risk, name) VALUES (5, 0.4, 'Лыжные');
+INSERT INTO hobby (id, risk, name) VALUES (7, 0.2, 'Фехтование');
+INSERT INTO hobby (id, risk, name) VALUES (1, 0.8, 'Футбол');
+INSERT INTO hobby (id, risk, name) VALUES (3, 0.5, 'Баскетбол');
+INSERT INTO hobby (id, risk, name) VALUES (4, 0.4, 'Биатлон');
+INSERT INTO hobby (id, risk, name) VALUES (6, 0.6, 'Волейбол');
+INSERT INTO hobby (id, risk, name) VALUES (8, 0, 'Музыка');
 
 
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (1,2,3,'15-03-2004','');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (2,2,5,'18-02-2009','');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (3,3,4,'12-11-1993','11-12-2016');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (4,4,5,'14-03-2004','03-05-2006');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (5,5,8,'18-06-2014','09-08-2017');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (6,6,7,'19-03-2018','15-03-2017');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (7,7,4,'07-04-2017','');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (8,8,2,'09-11-2018','');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (9,8,1,'28-02-2019','02-03-2019');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (10,9,4,'19-12-2009','24-12-2009');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (11,9,5,'18-06-2013','25-09-2018');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (12,11,6,'18-06-2014','');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (13,12,7,'23-01-1999','14-04-2004');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (14,1,1,'19-07-2017','');
-INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES (15,16,5,'13-02-2018','');
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (1, 2, 3, '03-15-2004', null);
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (2, 2, 5, '02-18-2009', null);
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (3, 3, 4, '11-12-1993', '12-11-2016');
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (4, 4, 5, '03-14-2004', '05-03-2006');
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (5, 5, 8, '06-18-2014', '08-09-2017');
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (6, 6, 7, '03-19-2018', '03-15-2017');
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (7, 7, 4, '04-07-2017', null);
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (8, 8, 2, '11-09-2018', null);
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (9, 8, 1, '02-28-2019', '03-02-2019');
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (10, 9, 4, '12-19-2009', '12-24-2009');
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (11, 9, 5, '06-18-2013', '09-25-2018');
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (12, 11, 6, '06-18-2014', null);
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (13, 12, 7, '01-23-1999', '04-14-2004');
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (14, 1, 1, '07-19-2017', null);
+INSERT INTO student_hobby (id, student_id, hobby_id, date_start, date_finish) VALUES (15, 16, 5, '02-13-2018', null);
+
+COMMIT;
 ```
 
 ## Задания на изменение/удаление/добавление
@@ -307,14 +213,17 @@ INSERT INTO STUDENTS_HOBBIES$ (id, id, hobby_id, date_start, date_finish) VALUES
 Поменяйте в скрипте на эти строки:
 
 ```sql
-ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK
-FOREIGN KEY (ID)
-REFERENCES STUDENTS$ (ID)
+BEGIN;
 
-/
-ALTER TABLE STUDENTS_HOBBIES$ ADD CONSTRAINT STUDENTS_HOBBIES$_FK1
-FOREIGN KEY (HOBBY_ID)
-REFERENCES HOBBIES$ (ID)
+ALTER TABLE student_hobby ADD CONSTRAINT student_hobby_student_fk
+FOREIGN KEY (id)
+REFERENCES student (id);
+
+ALTER TABLE student_hobby ADD CONSTRAINT student_hobby_hobby_fk
+FOREIGN KEY (hobby_id)
+REFERENCES hobby (id);
+
+COMMIT;
 ```
 
 И выполните все задания выше ещё раз. В некоторых ситуация будет нарушение целостности данных (например, в 1). Решите эти проблемы (не обязательно выполнять задания в один запрос)
@@ -350,50 +259,42 @@ REFERENCES HOBBIES$ (ID)
 
    Скрипт создания таблиц и добавления данных:
 
-   ```sql
-   CREATE TABLE  "USERS"
-   ("USERS_ID" NUMBER,
-   "BANNED" VARCHAR2(50),
-   "ROLE" VARCHAR2(200),
-   CONSTRAINT "USERS_CHECK_ROL" CHECK ( "ROLE" in ('client', 'driver','partner')) ENABLE,
-   CONSTRAINT "USERS_CON" PRIMARY KEY ("USERS_ID")
-   USING INDEX  ENABLE
-   )
-   /
-   CREATE TABLE  "TRIPS"
-   ("ID" NUMBER,
-   "CLIENT_ID" NUMBER,
-   "DRIVER_ID" NUMBER,
-   "CITY_ID" NUMBER,
-   "STATUS" VARCHAR2(200),
-   "REQUEST_AT" VARCHAR2(50),
-   CONSTRAINT "TRIPS_CHECK_CON" CHECK ( "STATUS" in ('completed', 'cancelled_by_driver', 'cancelled_by_client')) ENABLE,
-   CONSTRAINT "TRIPS_CON" PRIMARY KEY ("ID")
-   USING INDEX  ENABLE
-   )
-   /
-   ALTER TABLE  "TRIPS" ADD CONSTRAINT "TRIPS_FK1" FOREIGN KEY ("CLIENT_ID")
-       REFERENCES  "USERS" ("USERS_ID") ENABLE
-   /
-   ALTER TABLE  "TRIPS" ADD CONSTRAINT "TRIPS_FK2" FOREIGN KEY ("DRIVER_ID")
-       REFERENCES  "USERS" ("USERS_ID") ENABLE
-   /
-   insert into Users (Users_Id, Banned, Role) values ('1', 'No', 'client');
-   insert into Users (Users_Id, Banned, Role) values ('2', 'Yes', 'client');
-   insert into Users (Users_Id, Banned, Role) values ('3', 'No', 'client');
-   insert into Users (Users_Id, Banned, Role) values ('4', 'No', 'client');
-   insert into Users (Users_Id, Banned, Role) values ('10', 'No', 'driver');
-   insert into Users (Users_Id, Banned, Role) values ('11', 'No', 'driver');
-   insert into Users (Users_Id, Banned, Role) values ('12', 'No', 'driver');
-   insert into Users (Users_Id, Banned, Role) values ('13', 'No', 'driver');
-    insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('1', '1', '10', '1', 'completed', '2013-10-01');
-   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('2', '2', '11', '1', 'cancelled_by_driver', '2013-10-01');
-   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('3', '3', '12', '6', 'completed', '2013-10-01');
-   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('4', '4', '13', '6', 'cancelled_by_client', '2013-10-01');
-   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('5', '1', '10', '1', 'completed', '2013-10-02');
-   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('6', '2', '11', '6', 'completed', '2013-10-02');
-   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('7', '3', '12', '6', 'completed', '2013-10-02');
-   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('8', '2', '12', '12', 'completed', '2013-10-03');
-   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('9', '3', '10', '12', 'completed', '2013-10-03');
-   insert into Trips (Id, Client_Id, Driver_Id, City_Id, Status, Request_at) values ('10', '4', '13', '12', 'cancelled_by_driver', '2013-10-03');
-   ```
+```sql
+BEGIN;
+
+CREATE TABLE user (
+  id INTEGER PRIMARY KEY,
+  banned VARCHAR(50),
+  role VARCHAR(200) CHECK (role IN ('client', 'driver','partner'))
+);
+
+CREATE TABLE trip (
+  id INTEGER PRIMARY KEY,
+  client_id INTEGER REFERENCES user(id),
+  driver_id INTEGER REFERENCES user(id),
+  city_id INTEGER,
+  status VARCHAR(200) CHECK (status in ('completed', 'cancelled_by_driver', 'cancelled_by_client')),
+  request_at VARCHAR(50)
+);
+
+INSERT INTO user (id, banned, role) VALUES (1, 'No', 'client');
+INSERT INTO user (id, banned, role) VALUES (2, 'Yes', 'client');
+INSERT INTO user (id, banned, role) VALUES (3, 'No', 'client');
+INSERT INTO user (id, banned, role) VALUES (4, 'No', 'client');
+INSERT INTO user (id, banned, role) VALUES (10, 'No', 'driver');
+INSERT INTO user (id, banned, role) VALUES (11, 'No', 'driver');
+INSERT INTO user (id, banned, role) VALUES (12, 'No', 'driver');
+INSERT INTO user (id, banned, role) VALUES (13, 'No', 'driver');
+INSERT INTO trip (id, client_id, driver_id, city_id, status, request_at) VALUES (1, 1, 10, 1, 'completed', '2013-10-01');
+INSERT INTO trip (id, client_id, driver_id, city_id, status, request_at) VALUES (2, 2, 11, 1, 'cancelled_by_driver', '2013-10-01');
+INSERT INTO trip (id, client_id, driver_id, city_id, status, request_at) VALUES (3, 3, 12, 6, 'completed', '2013-10-01');
+INSERT INTO trip (id, client_id, driver_id, city_id, status, request_at) VALUES (4, 4, 13, 6, 'cancelled_by_client', '2013-10-01');
+INSERT INTO trip (id, client_id, driver_id, city_id, status, request_at) VALUES (5, 1, 10, 1, 'completed', '2013-10-02');
+INSERT INTO trip (id, client_id, driver_id, city_id, status, request_at) VALUES (6, 2, 11, 6, 'completed', '2013-10-02');
+INSERT INTO trip (id, client_id, driver_id, city_id, status, request_at) VALUES (7, 3, 12, 6, 'completed', '2013-10-02');
+INSERT INTO trip (id, client_id, driver_id, city_id, status, request_at) VALUES (8, 2, 12, 12, 'completed', '2013-10-03');
+INSERT INTO trip (id, client_id, driver_id, city_id, status, request_at) VALUES (9, 3, 10, 12, 'completed', '2013-10-03');
+INSERT INTO trip (id, client_id, driver_id, city_id, status, request_at) VALUES (10, 4, 13, 12, 'cancelled_by_driver', '2013-10-03');
+
+COMMIT;
+```

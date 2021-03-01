@@ -32,7 +32,7 @@ FROM имя_таблицы;
 
 ```sql
 SELECT *
-FROM students;
+FROM student;
 ```
 
 ### Псевдоним
@@ -47,21 +47,21 @@ FROM students;
 
 ```sql
 Select name, surname
-From students
+From student
 ```
 
 С использованием псевдонима таблицы
 
 ```sql
 Select s.name, s.surname
-From students s
+From student s
 ```
 
 С использованием псевдонима атрибутов
 
 ```sql
 Select s.name as students_name, s.surname as n
-From students s
+From student s
 ```
 
 Код выше сработает и без `as`, но для удобства лучше его использовать.
@@ -77,9 +77,9 @@ SELECT поле1[, поле2, …] FROM имя_таблицы;
 -- вывод неполной информации о студентах
 
 ```sql
-SELECT N_z,
+SELECT id,
        Name
-FROM students;
+FROM student;
 ```
 
 ### Исключение дубликатов
@@ -90,7 +90,7 @@ FROM students;
 
 ```sql
 SELECT DISTINCT surname
-FROM students;
+FROM student;
 ```
 
 ### Выборка вычисляемых значений
@@ -105,7 +105,7 @@ FROM students;
 
 ```sql
 SELECT *
-FROM students
+FROM student
 ORDER BY surname,
          Name;
 ```
@@ -116,7 +116,7 @@ ORDER BY surname,
 
 ```sql
 SELECT *
-FROM students
+FROM student
 ORDER BY surname,
          Name DESC;
 ```
@@ -146,7 +146,7 @@ ORDER BY surname,
 
 ```sql
 SELECT Name
-FROM hobbies
+FROM hobby
 WHERE Risk <=5;
 ```
 
@@ -154,7 +154,7 @@ WHERE Risk <=5;
 
 ```sql
 SELECT Name
-FROM hobbies
+FROM hobby
 WHERE NOT Risk >5;
 ```
 
@@ -168,7 +168,7 @@ WHERE NOT Risk >5;
 
 ```sql
 SELECT Name
-FROM hobbies
+FROM hobby
 WHERE Risk NOT BETWEEN 5 AND 8;
 ```
 
@@ -180,7 +180,7 @@ WHERE Risk NOT BETWEEN 5 AND 8;
 
 ```sql
 SELECT n_group
-FROM students
+FROM student
 WHERE n_group IN (11,
                12,
                13);
@@ -192,7 +192,7 @@ WHERE n_group IN (11,
 
 ```sql
 SELECT n_group
-FROM students
+FROM student
 WHERE n_group NOT IN (11,
                    12,
                    13);
@@ -214,7 +214,7 @@ WHERE n_group NOT IN (11,
 
 ```sql
 SELECT *
-FROM students
+FROM student
 WHERE surname LIKE 'O%ов';
 ```
 
@@ -228,7 +228,7 @@ WHERE surname LIKE 'O%ов';
 
 ```sql
 SELECT *
-FROM students
+FROM student
 WHERE address IS NULL;
 ```
 
@@ -261,14 +261,14 @@ VALUES (value1, value2, value3, ...);
 Пример:
 
 ```sql
-INSERT INTO students (ID, name, surname)
+INSERT INTO student (id, name, surname)
 VALUES (5, 'Иван', 'Иванов');
 ```
 
 Пример выше включает и добавление первичного ключа, но чаще (и мы так будем делать) используется автоматическа генерация первичного ключа, поэтому в основном запросы добавления у вас будут выглядеть следующим образом
 
 ```sql
-INSERT INTO students (name, surname)
+INSERT INTO student (name, surname)
 VALUES ('Иван', 'Иванов');
 ```
 
@@ -310,9 +310,9 @@ WHERE condition;
 Пример:
 
 ```sql
-UPDATE students
+UPDATE student
 SET Name = 'Николай', Address = 'Dubna'
-WHERE ID = 3;
+WHERE id = 3;
 ```
 
 Ещё раз. Например, в запросе на обновление данных, если вам надо поменять только одну запись, то используйте первичный ключ. Что-то уникальное.
@@ -320,7 +320,7 @@ WHERE ID = 3;
 Если вы напишите такой запрос:
 
 ```sql
-UPDATE students
+UPDATE student
 SET score = 5
 WHERE Name = 'Николай' and Address = 'Dubna';
 ```
@@ -343,15 +343,15 @@ WHERE condition;
 
 ```sql
 DELETE
-FROM students
+FROM student
 WHERE name = 'Николай';
 ```
 
-Если вам надо удалить конкретного студента, то, опять же, используйте уникальные значения. В нашем случае в таблице `students` это номер зачётки.
+Если вам надо удалить конкретного студента, то, опять же, используйте уникальные значения. В нашем случае в таблице `student` это номер зачётки.
 
 ```sql
 DELETE
-FROM students
+FROM student
 WHERE id = 3;
 ```
 
@@ -359,5 +359,5 @@ WHERE id = 3;
 
 ```sql
 DELETE
-FROM students;
+FROM student;
 ```

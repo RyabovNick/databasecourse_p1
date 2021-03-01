@@ -20,7 +20,7 @@
 
    ```sql
    SELECT s.*
-   FROM students s, students_hobbies sh
+   FROM student s, students_hobbies sh
    WHERE s.id = sh.id
    ```
 
@@ -28,7 +28,7 @@
 
    ```sql
    SELECT s.*
-   FROM students s, students_hobbies sh
+   FROM student s, students_hobbies sh
    WHERE s.id = sh.id AND date_finish IS NOT NULL
    ```
 
@@ -38,7 +38,7 @@
 
    ```sql
    SELECT s.*
-   FROM students s, students_hobbies sh
+   FROM student s, students_hobbies sh
    WHERE s.id = sh.id AND sh.date_finish IS NOT NULL
    ```
 
@@ -93,7 +93,7 @@
 
    ```sql
    SELECT s.n_group, count(*) as students_count
-   FROM students s
+   FROM student s
    GROUP BY s.n_group
    HAVING count(*) < 8
    ```
@@ -106,13 +106,13 @@
 
    ```sql
    SELECT *
-   FROM students s
+   FROM student s
    ORDER BY s.n_group
    ```
 
    ```sql
    SELECT *
-   FROM students s
+   FROM student s
    ORDER BY s.n_group desc
    ```
 
@@ -146,7 +146,7 @@
 
    - Названия таблиц в множественном числе, если состоит из нескольких слов, то последнее должно быть в множественном числе. STUDENTS, HOBBIES, STUDENTS_HOBBIES
 
-   - Псевдонимы (aliasing - as) - совет ORACLE сокращать до 4 символов. Максимальное количество символов в названии - 30. Чтобы не вводить каждый раз название таблицы полное - используются псевдонимы (для атрибутов это тоже возможно!). Запомните это, но в курсе использовать не обязательно. У нас не так много таблиц. Поэтому можно писать запрос так: `FROM students s, hobbies h, students_hobbies sh`. По правилам Oracle нам необходимо сделать так: `FROM students stud, hobbies hobb, students_hobbies stho`
+   - Псевдонимы (aliasing - as) - совет ORACLE сокращать до 4 символов. Максимальное количество символов в названии - 30. Чтобы не вводить каждый раз название таблицы полное - используются псевдонимы (для атрибутов это тоже возможно!). Запомните это, но в курсе использовать не обязательно. У нас не так много таблиц. Поэтому можно писать запрос так: `FROM student s, hobby h, students_hobbies sh`. По правилам Oracle нам необходимо сделать так: `FROM student stud, hobby hobb, students_hobbies stho`
 
    - атрибуты не должны начинаться с псевдонима или вообще с названия таблицы (однако есть ситуации, когда это полезнее, но точно не в нашем случае)
 

@@ -11,7 +11,7 @@ let insertValues = []
 let supplierInsert = `INSERT INTO supplier (name, city, street, house, phone, email)
 VALUES`
 
-// генерируемые ID от 1 до 10
+// генерируемые id от 1 до 10
 // используем эти значения для дальнейшей генерации
 // внешних ключей в таблицах, связанных с supplier
 const minIDSupplier = 1
