@@ -54,6 +54,66 @@ SELECT
 END
 ```
 
+### SUBSTR
+
+[Более подробно у функция работы с string](https://www.postgresql.org/docs/12/functions-string.html)
+
+```sql
+-- извлекает из string начиная с from символа count символов
+substr(string, from [, count])
+```
+
+Пример:
+
+```sql
+SELECT substr('alphabet', 3, 2)
+-- вернёт ph
+```
+
+### Date
+
+#### Для работы с диапазоном дат
+
+Возвращает количество дней между датами:
+
+```sql
+SELECT date_finish - date_start
+FROM student_hobby
+```
+
+Возвращает уже с количеством лет, месяцев, дней:
+
+```sql
+SELECT age(date_finish, date_start)
+FROM student_hobby
+```
+
+Аналогичный вариант (но чуть длиньше):
+
+```sql
+SELECT justify_days(date_finish - date_start)
+FROM student_hobby
+```
+
+Дальше из интервала можно достать любое значение, например:
+
+```sql
+SELECT extract(year from age(date_finish, date_start))
+FROM student_hobby
+```
+
+Если вы хотите года в месяца перевести, то:
+
+```sql
+SELECT 12 * extract(year from age(date_finish, date_start))
+FROM student_hobby
+```
+
+Просто умножаем на 12 )))
+
+соответственно можно достать также: month, days. К годам можно добавить ещё
+месяца, чтобы получить кол-во месяцей между двумя датами
+
 ## Oracle
 
 LOWER - маленькими
