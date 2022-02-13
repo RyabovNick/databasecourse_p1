@@ -6,7 +6,7 @@
 
 [Балльно-рейтинговая система](./RatingSystem)
 
-[Таблица с баллами](https://docs.google.com/spreadsheets/d/1JnVIyw9uFKonC6uBeAOhG8Vxr3d2ssnQJXsrHJ-vVeU/edit?usp=sharing)
+[Таблица с баллами](https://docs.google.com/spreadsheets/d/1Hr4jAvn73CfE60kqi8_gy9ft9zngQzKqvWyEia-0r9Y/edit?usp=sharing)
 
 [Политика сотрудничества в группах](./CollaborationPolicy)
 
