@@ -6,7 +6,7 @@
 
 [Балльно-рейтинговая система](./RatingSystem)
 
-[Таблица с баллами](hhttps://docs.google.com/spreadsheets/d/1PED_IEbkbqftfVQj4vdCe5UVzgH2KjEwvKayownSRvU/edit?usp=sharing)
+[Таблица с баллами](https://docs.google.com/spreadsheets/d/1PED_IEbkbqftfVQj4vdCe5UVzgH2KjEwvKayownSRvU/edit?usp=sharing)
 
 [Политика сотрудничества в группах](./CollaborationPolicy)
 
@@ -18,7 +18,7 @@
 
 **Для удобства советую справа сверху нажать кнопку Watch.** О любом изменении, произведённом в репозитории, вам придёт уведомление на почту. Это полезно, т.к. в ходе курса точно что-то будет меняться.
 
-**После регистрации на Github активируйте по своей универской почте https://education.github.com/. Github Developer Pack представляет для студентов доступ к целому ряду платных продуктов, которые вы, пока являетесь студентом, получите бесплатно.**
+**После регистрации на Github активируйте по своей универской почте <https://education.github.com/>. Github Developer Pack представляет для студентов доступ к целому ряду платных продуктов, которые вы, пока являетесь студентом, получите бесплатно.**
 
 ## Теория
 
