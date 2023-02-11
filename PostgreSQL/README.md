@@ -63,6 +63,8 @@ http://95.217.232.188/pgadmin4
 |frolov@m.m |
 |chernyadev@m.m |
 |shalamaev@m.m |
+|kostyk@m.m |
+|xaritonov@m.m |
 
 После успешного входа в pgAdmin подключитесь к серверу:
 
