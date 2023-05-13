@@ -224,7 +224,7 @@ ALTER TABLE student_hobby ADD CONSTRAINT student_hobby_hobby_id_fkey
 FOREIGN KEY (hobby_id)
 REFERENCES hobby (id);
 
-ROLLBACK;
+COMMIT;
 ```
 
 И выполните все задания выше ещё раз. В некоторых ситуация будет нарушение целостности данных (например, в 1). Решите эти проблемы (не обязательно выполнять задания в один запрос)
